@@ -380,8 +380,13 @@ def test_pdf_placeholders(tmp: Path) -> None:
     check("the real main.pdf passes the sweep",
           "0 failures" in out,
           [l for l in out.splitlines() if "FAIL" in l][:1])
-    check("[REPOSITORY URL] is reported as known, not as a failure",
-          "[known]" in out and "REPOSITORY URL" in out)
+    # The repository URL is now inserted, so the sweep must report the
+    # placeholder as gone. Kept as a control rather than deleted: if a future
+    # edit reintroduces the bracketed placeholder, this flips back to [known]
+    # and the assertion fails, which is the signal we want.
+    check("[REPOSITORY URL] is resolved -- sweep reports it gone",
+          "[gone ]" in out and "REPOSITORY URL" in out,
+          [l for l in out.splitlines() if "REPOSITORY URL" in l][:1])
 
 
 def test_numbers_precision(tmp: Path) -> None:
