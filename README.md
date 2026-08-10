@@ -4,6 +4,8 @@ Supporting material for the manuscript *Morphometric validity is not a
 scalar: segmentation accuracy does not predict which biological conclusions
 survive measurement* (Alareqi, Luo, AL-Bakhrani).
 
+This repository lives at <https://github.com/albakhrani/morphometric-validity>.
+
 Everything reported in the paper is reproducible from this repository plus
 the public [LIVECell](https://sartorius-research.github.io/LIVECell/)
 dataset, which is not redistributed here.
