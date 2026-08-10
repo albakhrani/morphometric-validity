@@ -1,0 +1,9 @@
+cell_type,tier,n,rho_expert,expert_lo,expert_hi,rho_conncomp,conncomp_lo,conncomp_hi,conncomp_agree,conncomp_excl0,rho_oursalt,oursalt_lo,oursalt_hi,oursalt_agree,oursalt_excl0,rho_ours,ours_lo,ours_hi,ours_agree,ours_excl0,rho_cellpose,cellpose_lo,cellpose_hi,cellpose_agree,cellpose_excl0
+A172,A,69,0.0716,-0.1613,0.3015,0.0099,-0.2171,0.2501,True,False,0.5615,0.3601,0.7243,True,True,0.4507,0.2318,0.621,True,True,0.1251,-0.1519,0.3893,True,False
+BT474,B,152,0.2645,0.0982,0.4115,0.5965,0.4674,0.6966,True,True,0.751,0.6568,0.8278,True,True,0.6554,0.5439,0.749,True,True,-0.0076,-0.1754,0.1651,False,False
+BV2,C,135,0.1605,-0.0136,0.32,0.4386,0.2586,0.5988,True,True,0.8818,0.836,0.9139,True,True,0.9038,0.8547,0.9327,True,True,0.645,0.5074,0.7504,True,True
+Huh7,A,200,0.4176,0.3064,0.5172,0.22,0.0826,0.3427,True,True,0.6126,0.5199,0.6898,True,True,0.7009,0.6199,0.7665,True,True,0.2801,0.148,0.3937,True,True
+MCF7,C,168,-0.2065,-0.3515,-0.0585,0.0197,-0.1576,0.1995,False,False,0.8032,0.7383,0.8496,False,True,0.4421,0.3101,0.5698,False,True,-0.8171,-0.8682,-0.7382,True,True
+SH-SY5Y,A,136,-0.6493,-0.7591,-0.5142,-0.6918,-0.7662,-0.5942,True,True,-0.5981,-0.7301,-0.4422,True,True,-0.6946,-0.8009,-0.5581,True,True,-0.7431,-0.8353,-0.6228,True,True
+SK-OV-3,A,134,-0.5999,-0.7279,-0.4523,-0.4482,-0.585,-0.2955,True,True,-0.6103,-0.7204,-0.4784,True,True,-0.4793,-0.6156,-0.3213,True,True,-0.7302,-0.8056,-0.6358,True,True
+SkBr3,A,160,0.9052,0.8617,0.9315,0.482,0.3112,0.6324,True,True,0.9265,0.8985,0.9427,True,True,0.9176,0.8822,0.9387,True,True,0.9489,0.927,0.9605,True,True

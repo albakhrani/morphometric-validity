@@ -1,0 +1,101 @@
+%% EXTENDED KEY POINTS -- NOT THE SUBMITTED VERSION.
+%%
+%% Briefings in Bioinformatics allows 3-5 brief sentences. The submitted Key
+%% Points are the five-sentence version (paper2_bib/keypoints_brief.tex).
+%% This file is the longer four-bullet, fifteen-sentence elaboration written
+%% first. It is kept because it states the same four dissociations at greater
+%% length and is useful if a reviewer asks for elaboration, but it is roughly
+%% three times the journal's stated allowance and was NOT submitted.
+%%
+%% Every number here is identical to the submitted version and to the tables.
+%%
+%% Key Points -- Briefings in Bioinformatics.
+%%
+%% Four bullets, one per dissociation, in the order the Results establish
+%% them. Written to stand alone: a reader who reads only this page should
+%% come away with the claim, the evidence for it, and what to do about it.
+%%
+%% Every number here was re-derived from disk while drafting, and each is
+%% the SAME number the abstract or a table already prints:
+%%   0.832 / 0.905, 0.416 / 0.017        Results (180-image
+%%                                       confluence-stratified sample)
+%%   0.111 -> 0.709                      Table 1, baseline-comparison sample
+%%   0.709 / 0.575, 0.284 / 0.178        Table 6 panel (a), atlas n = 1419
+%%   rho = -0.620, p = 3.1e-9            Results, operating-point sweep
+%%   18.7% / 49.3% / 56.5%               coverage, atlas n = 1419
+%%   -0.311 vs +0.027                    A172 expert span, full vs
+%%                                       complete-case subset (n = 136 / 69)
+%%   0.815 vs 0.709, 5 of 6 vs 6 of 6    Table 6 panel (a)
+%%   BT-474 +0.26 / +0.66 / -0.01        Table 7, verbatim
+%%
+%% NO DATASET-WIDE COUNT APPEARS HERE, and that is deliberate.
+%%
+%% Three different samples carry these four bullets -- 180 test images
+%% (bullet 1), the operating-point sweep (bullet 2), and the 1419-image
+%% atlas (bullets 3 and 4). No single headline count is true of all of them,
+%% so each bullet states the n its own claim rests on and nothing wider.
+%%
+%% Two counts were tried here and both were wrong. 1.09 million cells is the
+%% descriptive atlas (4875 images) and does not describe any result in these
+%% bullets. "Over 1.6 million" is worse: it is LIVECell's full published
+%% total across 5387 images, i.e. a dataset total standing in for a result
+%% computed on 180 of them. If a reviewer or a later editor wants scale
+%% signalled here, attach the number to the analysis it describes -- do not
+%% put a corpus total next to a subset result.
+\section*{Key Points}
+\begin{itemize}
+
+\item \textbf{A segmentation model can get better at pixels while getting
+worse at cells.} On LIVECell (eight cell lines, label-free phase contrast),
+foreground intersection-over-union of a single trained backbone rises from
+0.832 to 0.905 across six confluence bins of 180 test images as fields
+fill, while matched-instance detection F1 computed
+from that same predicted foreground by connected-component labeling falls
+from 0.416 to 0.017 --- a twenty-five-fold collapse underneath a rising
+score. Both numbers describe one prediction: the pixel metric carries no information about the
+instance-level failure beneath it. A 33-parameter distance head decoded by
+marker-controlled watershed lifts F1 from 0.111 to 0.709 on that same
+foreground, placing the failure in the decoding rather than the
+segmentation. A study that reports a segmentation score and then measures
+per-cell shape has validated the wrong quantity.
+
+\item \textbf{The operating point that detects best measures worst.}
+Sweeping the watershed seed threshold and minimum separation traces a Pareto
+front on which detection accuracy and measurement bias are opposed: moving
+from the detection-optimal setting to the measurement-optimal one lowers
+detection F1 from 0.709 to 0.575 while reducing mean absolute shape-index
+bias from 0.284 to 0.178. Across the sampled settings the two are strongly
+anti-correlated ($\rho = -0.620$, $p = 3.1\times10^{-9}$), so the
+configuration a leaderboard would select sits close to the worst available
+for morphometry. Both operating points are therefore reported throughout,
+and neither is the correct one: which to use is a study-design decision, not
+a tuning detail.
+
+\item \textbf{A pipeline can fail by producing no measurement at all, and
+that failure is not random.} Connected-component labeling returns no
+measurable cell in 18.7\% of fields, and the loss falls precisely where
+crowding makes the biology interesting: it fails on 49.3\% of A172 images
+and 56.5\% of SK-OV-3 images while losing nothing in five other lineages.
+Because the missing fields are the dense ones, restricting a comparison to
+images every method handles --- ordinary complete-case practice --- costs more
+than power. On the surviving A172 subset the \emph{expert}
+annotations report a shape-index trajectory of $+0.027$ where the full
+density range gives $-0.311$: the restriction does not shrink the reference
+trajectory, it inverts its direction. Complete-case handling is unsafe
+whenever the methods compared differ in what they fail to measure.
+
+\item \textbf{Which lineages a pipeline gets wrong depends on the segmenter,
+and detection accuracy does not predict which.} Four mask sources spanning a
+sevenfold range in detection F1 were passed through identical geometry code,
+so any difference in the biology recovered is attributable to the masks.
+Cellpose detects significantly better than our 33-parameter extension (F1
+0.815 against 0.709, non-overlapping intervals) yet recovers five of the six
+well-evidenced lineage trajectories where the weaker detector recovers all
+six. The one it loses, BT-474, is among the best evidenced:
+expert $\rho = +0.26$ $[+0.10, +0.41]$, extension $+0.66$ $[+0.54, +0.75]$,
+Cellpose $-0.01$ $[-0.18, +0.17]$ --- an interval containing zero that does
+not overlap the extension's. Segmentation method and operating point are
+experimental variables: validate them against ground truth on the quantity a
+study reports, rather than selecting from a benchmark table.
+
+\end{itemize}

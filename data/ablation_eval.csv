@@ -1,0 +1,5 @@
+config,added_params,transfer_init,val_iou,val_mae,test_f1,abs_bias,amp_ratio,n_amp_lineages,n_images
+C  both heads (reference),66,True,,,0.7036,0.2307,0.4242,4,149
+A  distance head only,33,True,,,0.6972,0.2451,0.4857,4,149
+B  boundary head only,33,True,,,0.0994,0.3603,0.9485,4,138
+"D  both heads, from scratch",66,False,,,0.6879,0.2327,0.4586,4,149

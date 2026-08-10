@@ -1,0 +1,5 @@
+source,f1,dir_all8,dir_tierAB,dir_strict,n_strict
+connected components,0.111,7,6,5,5
+"ours, measurement-optimal",0.575,7,6,5,5
+"ours, detection-optimal",0.709,7,6,5,5
+Cellpose,0.815,7,5,4,5
