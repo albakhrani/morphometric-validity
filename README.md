@@ -18,7 +18,7 @@ dataset, which is not redistributed here.
 | `figures_code/` | one script per manuscript figure, plus the type-size checker |
 | `data/` | per-image and per-lineage measurement tables backing every reported number |
 | `weights/` | the trained instance-preserving checkpoint (2.22 M backbone + 66 head parameters) |
-| `manuscript/` | cover letter, the extended Key Points variant, and the OUP bibliography style and `refs.bib` the submission builds against |
+| `manuscript/` | cover letter, the extended Key Points variant, the OUP bibliography style and `refs.bib` the submission builds against, and `DECISIONS.md` — the decision record the manuscript ships under |
 | `tiff_export/` | the `sitecustomize.py` shim used when exporting figures to TIFF |
 
 ## Reproducing the reported numbers

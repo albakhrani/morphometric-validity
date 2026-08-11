@@ -1,0 +1,237 @@
+# Submission package — Briefings in Bioinformatics
+
+Everything here is either verified against the journal's own pages or marked
+as unverified. Nothing is asserted from memory.
+
+---
+
+## 1. File set
+
+Submission is through ScholarOne Manuscripts (`manuscriptcentral.com/bib`).
+
+| # | File | Contents | Status |
+|---|------|----------|--------|
+| 1 | `main.pdf` | Compiled manuscript, 20 pp, 52 refs | ready |
+| 2 | `main.tex` | Front matter, Key Points, back matter | ready |
+| 3 | `body.tex` | Sections 1–4, 7 tables | ready |
+| 4 | `keypoints_brief.tex` | Key Points, 5 sentences — see §2 | ready |
+| 5 | `refs.bib` | 52 entries, all Crossref-verified | ready |
+| 6 | `oup-plain-unsrt.bst` | Appearance-ordered numeric style | ready |
+| 7 | `oup-plain.bst` | OUP's unmodified original, for comparison | ready |
+| 8 | `oup-authoring-template.cls` | Vendor class, unmodified | ready |
+| 9 | 7 figure PDFs | `Fig1_architecture`, `Fig2_architecture`, `Fig3_mechanism`, `Fig2_micrographs`, `Fig5_merged`, `Fig2_atlas`, `atlas_comparison` | ready |
+| 10 | `cover_letter.pdf` | 1 page | ready |
+| 11 | Data availability | in `main.tex` back matter | **awaiting repository URL** |
+
+Checkers travel with the repository, not the submission: `check_figure_type.py`,
+`check_figure_resolution.py`, `check_cite_order.py`, `verify_refs.py`,
+`test_checkers.py`.
+
+**Figure formats.** The Manuscript Preparation page lists GIF/TIFF/BITMAP and
+asks for 600 dpi line art, 300 dpi greyscale. Our figures are **vector PDF**,
+which exceeds any dpi specification for the line-art content and is normally
+preferred by OUP production; the embedded rasters measure 397–401 dpi at
+placed size. Figures are supplied as separate files, as the journal requires.
+
+**If the portal refuses vector uploads**, the TIFF path is built and tested,
+not improvised:
+
+```
+python recalibrate_figures.py --format tiff --tiff-dpi 600
+```
+
+This puts `tiff_export/` on `PYTHONPATH`; its `sitecustomize.py` wraps
+`Figure.savefig` so every generator that writes a PDF also writes a TIFF
+**rendered from the live figure**, with the same bbox and padding. It does
+not rasterise the finished PDF — that would resample artwork already laid
+out, which is the failure the resolution checker exists to catch. No
+generator is edited, so the figsize calibration cannot drift out of step.
+
+Measured on the exported TIFFs at the OUP measure: **596–617 dpi** at placed
+size across all five vector figures, FAIL count 0. The two model-dependent
+figures (`Fig3_mechanism`, `Fig2_micrographs`) need the checkpoint and
+LIVECell images on disk; drop `--only` to include them.
+
+`check_figure_resolution.py` now reads TIFF and PNG directly (IFD tag 256 /
+IHDR, no Pillow dependency). `check_figure_type.py` **cannot** check a
+flattened raster — there are no text objects left — so type is verified on
+the PDF master and the raster inherits it only at a dpi high enough to
+resolve it. The checker prints that caveat rather than leaving it implied.
+
+**Author biographies — unresolved, and only resolvable at the portal.** The
+Manuscript Preparation page mentions a short author bio (~30 words). The
+Author Guidelines page does not mention biographies at all, and neither ties
+the requirement to an article type. Briefings has historically been a review
+journal, where author bios are conventional; whether ScholarOne asks for one
+on a Research Article submission is visible only after login, which cannot be
+checked from here. It is a thirty-second check on the first submission
+screen. If it asks, three ~30-word bios are needed and the text must come
+from the authors.
+
+---
+
+## 2. Key Points — settled
+
+**Placement confirmed.** The journal states Key Points are "displayed at the
+end of the article". Ours sit after the Discussion, before the declarations.
+
+**Length: the five-sentence version ships.** The journal states Key Points
+"should consist of **3-5 brief sentences**" — sentences in total, not per
+bullet. Verified on both the Manuscript Preparation and Author Guidelines
+pages.
+
+| file | bullets | sentences | words | status |
+|------|---------|-----------|-------|--------|
+| `keypoints_brief.tex` | 5 | 5 | 153 | **submitted** |
+| `keypoints.tex` | 4 | 15 | 511 | not submitted; kept as `release_repo/manuscript/keypoints_extended.tex` |
+
+`main.tex:235` inputs `keypoints_brief`. The extended variant is labelled as
+such in the release repository, available if a reviewer asks for elaboration.
+
+All four dissociations survive the cut, the segmenter-dependence finding
+stays in bullet 4, and the closing recommendation is intact. Every number is
+identical to the extended version and to the tables — verified mechanically,
+not by eye, by `check_numbers.py`.
+
+---
+
+## 3. Suggested reviewers
+
+Held **outside this build tree**, in
+`SUBMISSION_reviewers_and_portal_notes.md` at the project root, so that
+no named third party or institutional email sits in the directory the
+submission bundle is built from. Three verified names; take them from
+the root file at the portal, never from anywhere else.
+
+## 4. Outstanding placeholders
+
+Swept across `main.tex`, `body.tex`, `keypoints.tex`, `refs.bib` in both the
+BiB and CAS trees, and across the compiled PDF text so the check reflects what
+a reader sees rather than what the source contains.
+
+| item | where | note |
+|------|-------|------|
+| ~~`[REPOSITORY URL]`~~ | resolved | **Closed.** Both trees now print `https://github.com/albakhrani/morphometric-validity`; zero occurrences of the bracketed string remain in either `main.tex`. No bracketed placeholder remains in either document. |
+| DLUT department | `paper2_bib/main.tex:132` | **not bracketed** — the empty `\orgdiv{}` was removed because it printed a leading comma. Affiliation 2 currently reads "Dalian University of Technology, Dalian, Liaoning, 116024, China". Add `\orgdiv{...},` before `\orgname` when confirmed. The CAS fallback still carries a `% TODO` comment at `main.tex:99`. |
+| author biographies | not written | ~30 words each, if the portal asks for them (§1) |
+
+Every other bracketed string in the compiled PDF is a confidence interval.
+
+---
+
+## 5. Overleaf compile — audited and proven
+
+The manuscript had never been built anywhere but MiKTeX on Windows. Three
+things differ on Overleaf, and all three were tested rather than reasoned
+about.
+
+### Case sensitivity
+
+`check_filenames.py` extracts every `\includegraphics`, `\input`,
+`\bibliography`, `\bibliographystyle` and `\documentclass` reference from
+every `.tex` and `.cls`, and compares each byte for byte against the
+directory listing. **13 references, 0 case mismatches, 0 extensionless
+ambiguities.**
+
+One reference resolves to nothing and is documented as benign:
+`oup-authoring-template.cls:3230` does `\input{wordcount.txt}` inside the
+body of `\newcommand{\wordcount}`, which this document never calls. The file
+would come from the `\immediate\write18{texcount ...}` on the line above, and
+shell escape is restricted on both MiKTeX and Overleaf — the log shows
+`runsystem(texcount ...)...disabled (restricted)`. Vendor class, not edited.
+
+The audit is not the only evidence. The bundle was built in an NTFS directory
+with the per-directory case-sensitive attribute enabled
+(`fsutil file setCaseSensitiveInfo ... enable`), verified genuinely
+case-sensitive by creating `probe.txt` and `PROBE.txt` side by side. As a
+negative control, renaming `Fig2_atlas.pdf` to `Fig2_Atlas.pdf` in that
+directory breaks the build with `! LaTeX Error: File 'Fig2_atlas' not
+found.` — so the passing run means something.
+
+### Packages
+
+75 `.sty`/`.cls` files are loaded, enumerated from the build log rather than
+from `\usepackage` lines, so transitive dependencies are included. Every one
+is a standard CTAN package present in full TeX Live, which is what Overleaf
+ships. Nothing is vendored except the class and the two `.bst` files, all of
+which travel in the bundle.
+
+Fourteen were fetched on demand by MiKTeX during this project, identified by
+file mtime against the bulk install date (a path test is useless here — this
+MiKTeX is a per-user install, so all 75 sit under the user profile):
+`etoolbox`; `array`, `fix-cm`, `ifthen`; the `amsmath` bundle; `listings`,
+`lstmisc`, `lstpatch`; and — most recently, 2026-02-13, during this port —
+**`flushend.sty` and `stfloats.sty`, the `sttools` bundle**. All are in TeX
+Live. The build below ran with `--disable-installer`, so nothing was fetched
+during it.
+
+`\societylogo` is `\def\societylogo{}` (`main.tex:72`) — a pure no-op. It
+references no image and expands to nothing, so there is no missing-file risk.
+
+### Build configuration
+
+`latexmk -pdf` — Overleaf's default flow — resolves the bibliography by
+itself: the log shows pdflatex, then `rule 'bibtex main'` twice interleaved
+with reruns. No manual bibtex pass is needed.
+
+`main.tex` records the compiler and TeX Live year at the top, and states that
+it is the root. `cover_letter.tex` is the only other file carrying a
+`\documentclass`; it is deliberately excluded from the bundle rather than
+annotated, so root detection cannot be ambiguous.
+
+### Result, in the case-sensitive directory with auto-install disabled
+
+| check | result |
+|---|---|
+| latexmk exit | 0 |
+| errors | 0 |
+| undefined citations / references | 0 / 0 |
+| pages | 20 |
+| citations | 52 |
+| appearance order | correct, 52 keys |
+| `??` in output | 0 |
+| auto-installs triggered | 0 |
+| overfull hbox | 1 (the class's own 11.38107 pt) |
+
+In-text citations print `[6] [1–3] [7] [8] [9] [4] [10, 11] [5]` — square
+brackets, comma separators, en-dash ranges, appearance order.
+
+### Bundle
+
+`overleaf_upload/` — 14 files, 2.60 MB uncompressed; `overleaf_upload.zip`
+2.28 MB (sha256 `6ff2bf109b7bad63`), flat (no wrapper directory, which Overleaf expects). Every file is
+byte-identical to its `paper2_bib` master. No `.py`, no `.png`, no
+`tiff_export/`, no `cover_letter.tex`.
+
+`oup-plain.bst` is in the bundle **unmodified** — verified by hash against
+the master and by confirming its `ITERATE {presort}` / `SORT` pass is intact,
+which our `oup-plain-unsrt.bst` lacks. The cover letter's claim is therefore
+true of the bundle a reviewer receives.
+
+---
+
+## 6. Decision log — current as of the close
+
+Each row is the state the manuscript ships in, not the state it passed
+through. Where a later finding superseded an earlier record, the earlier
+record is named so the supersession is visible rather than silent.
+
+| decision | state | evidence |
+|---|---|---|
+| **Step F override** | **executed.** The reference style was converted in one atomic pass: `oup-plain-unsrt.bst` gained `format.names` truncating to three authors + `\emph{et~al.}`, `format.jnl.numbers` for the `Journal Year;**Vol**:pages` form, and `format.doi.url`; `doi` was added to `ENTRY`. | refs [1], [19], [30] quoted from the fresh PDF in 7 |
+| **Journal abbreviations** | **17 of 18 distinct titles carry the NLM Catalog abbreviation.** The eighteenth, *Nature*, is its own abbreviation. **Supersedes two earlier records:** the F-era "all titles full-form" and the F′-era "13 of 18, five documented exceptions". | four of the five F′ exceptions resolved by keying the NLM lookup on **ISSN** rather than title string; `Comput Biol Med`, `Cytometry A`, `Med Image Anal`, `Phys Rev X` applied |
+| **Abbreviations are never invented** | standing. A title that no catalog record confirms ships full-form and is reported. Two of the four above had returned a *different journal* under title-string search — the reason title matching was abandoned. | `FULL_FORM_OK` in `check_bib_consistency.py` now documents only self-abbreviating titles (`Nature`, `BMC Bioinformatics`) |
+| **Page ranges** | ship **full, not elided** — `1038--1045`, not `1038--45`. | ref [30] as printed |
+| **`refs.bib` diverges between trees, intentionally** | OUP carries 7 eLocators, 10 brace-protected entries and the NLM abbreviations; CAS is untouched. This is not drift and must not be "fixed" by syncing. | the two files differ by design; each tree builds clean |
+| **G-3 deictic adjudication** | the meta-frame was deleted. **One sanctioned one-word exception** remains where removal would have broken the sentence. | recorded at adjudication; CAS Introduction is 1 word shorter than OUP for the parallel reason |
+| **B19** | **accepted deviation** from the exemplar convention, taken deliberately rather than by oversight. | — |
+| **Introduction length** | **1,522 words** (OUP), 1,521 (CAS), heading-anchored, citations excluded. **Supersedes the logged 1,524**, which came from a hard-coded line window (`body[0:177]`) that later edits left stopping mid-sentence; that window now reads 1,507. The span is `\section{Introduction}` to `\section{Materials and methods}`, `body.tex` lines 1–180. | re-derived at the close, both trees |
+| **G-4 retraction** | **retracted, with cause.** The claim that `bbae284` was uncited was mine and was false: I grepped `body.tex` for the DOI string. The entry is cited by key as `Tang2024` and prints as reference [21]. | citedness now matches **by key, never by DOI**; a negative control asserts that a DOI appearing in prose does **not** count as a citation |
+| **False passes** | seven-plus found and fixed across the program; the class is now guarded, not merely fixed. The lesson is recorded in the checker sources: *a checker that only ever sees passing input has not been shown to detect anything.* | 64 negative controls, up from 18 |
+| **Reviewer dossier location** | held in **one** place, `SUBMISSION_reviewers_and_portal_notes.md` at the project root, and **not** in `paper2_bib/`. It had been byte-identical in both; the build-tree copy now carries a pointer only. Three named academics and their institutional emails must never sit in the directory the submission bundle is built from, and must never reach the public repository. | build-tree copy: 0 emails, 0 names; root copy: 3 and 3; public repo swept clean |
+| **Abstract length** | **233 words** (source), printing as 234 whitespace tokens because "matched-instance" breaks across a line. Check any portal abstract limit against 233. | `main.tex`, and page 1 of `main.pdf` |
+| **Review-turnaround prior** | the only evidence on disk is the three BiB exemplars in `BIB papers/`: received-to-accepted of 113, ~195 and 200 days — roughly **four to seven months**. bbae407 is **not** on disk in any form, so no turnaround figure may be attributed to it. | dateline of each exemplar, page 1 |
+| **Out-of-band fork identified and closed** | An Overleaf-side compile of this paper, 21 pp, existed outside both trees: the author’s `Downloads/paper2.pdf`, sha256 `0502e8c6925f3afd`, modified 2026-08-10 17:55. Its author block carried `\author[2,3]`, `School of Software Technology` and `Albaydha University, Albaydha, Yemen`, none of which had ever been in the trees. **Reconciled one-directionally on 2026-08-11: the affiliations came in; for all other content the trees are authoritative.** Its Conclusion is pre-recast, so it must not be used as a source for anything else. Both trees now print the full block; that compile is superseded and must not be sent to anyone. | author block quoted from both freshly compiled PDFs, and the title block of each rendered and inspected |
+| **Fork scope** | one file per tree. `main.tex` changed in each; every other bundle file hashes exactly as before. | 13 of 14 bundle hashes unchanged, archive `6ff2bf10…` → `ea082e72…` |
+| **Albaydha city spelling — open** | this paper prints the city as **Albaydha**, taken from the author's own compile. Two other papers by the same co-author on disk print `Albaydha University, **Albydha**, Yemen` — the city without the second *a*, while the university keeps it. The two spellings cannot both be right. Flagged for the author's confirmation; a correction here is a one-line edit plus a rebuild, expected rather than exceptional. | the two Multi-task-graph papers in `Downloads/`, page 1 |
+| **Overleaf is a compile target only** | every upload overwrites the cloud project wholesale; no edit is ever made there directly. This fork is what that rule exists to prevent. | operating rule, adopted 2026-08-11 |
