@@ -18,6 +18,8 @@ dataset, which is not redistributed here.
 | `figures_code/` | one script per manuscript figure, plus the type-size checker |
 | `data/` | per-image and per-lineage measurement tables backing every reported number |
 | `weights/` | the trained instance-preserving checkpoint (2.22 M backbone + 66 head parameters) |
+| `manuscript/` | cover letter, the extended Key Points variant, and the OUP bibliography style and `refs.bib` the submission builds against |
+| `tiff_export/` | the `sitecustomize.py` shim used when exporting figures to TIFF |
 
 ## Reproducing the reported numbers
 
@@ -32,11 +34,11 @@ Each table and figure traces to a file in `data/`:
 | Table 5 (inference cost) | no data file -- measured on hardware, not derived from a table |
 | Table 6 (evidence-tiered atlas, all splits) | `atlas_lineage_table_allsplits.csv` |
 | Table 7 (mask-source comparison) | `mask_source_comparison_per_image.csv`, `mask_source_trajectories.csv` |
-
-Every table in the manuscript appears above. Tables 1 and 5 introduce no data file: the first is an inventory of the image counts used elsewhere, the second is a hardware measurement.
 | coverage analysis | `coverage_by_lineage.csv`, `coverage_corrected_trajectories.csv`, `direction_counts.csv` |
 | accuracy/validity envelope (Fig. 5A,B) | `envelope_v2_data.csv` |
 | operating-point sweep (Fig. 5C,D) | `validation_sweep.csv`, `test_frozen.csv` |
+
+Every table in the manuscript appears above. Tables 1 and 5 introduce no data file: the first is an inventory of the image counts used elsewhere, the second is a hardware measurement.
 
 The per-cell measurement table for the full atlas (1,085,227 cells) is 289 MB
 and is not included; regenerate it with:

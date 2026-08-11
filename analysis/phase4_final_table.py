@@ -38,7 +38,7 @@ Outputs (--out):
 Usage
     python phase4_final_table.py \
         --csv  phase1_out/atlas_features_percell.csv \
-        --coco "D:/paper1_mechanobiology - Copy (2)/data/raw/livecell/livecell_coco_test.json" \
+        --coco path/to/livecell_coco_test.json \
         --out  final_table_out
 """
 from __future__ import annotations

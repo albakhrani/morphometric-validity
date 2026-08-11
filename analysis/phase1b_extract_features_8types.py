@@ -19,7 +19,7 @@ Density = ALL annotations per image (unbiased). exclude_border for clean shapes.
 
 Usage
     python phase1b_extract_features_8types.py \
-        --coco "D:/paper1_mechanobiology - Copy (2)/data/raw/livecell/livecell_coco_test.json" \
+        --coco path/to/livecell_coco_test.json \
         --out  phase1_out
 """
 from __future__ import annotations
