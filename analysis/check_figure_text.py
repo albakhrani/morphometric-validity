@@ -52,20 +52,30 @@ FORBIDDEN = [
     ("opposite direction",
      "superseded phrasing; the paper says 'inverts its direction'"),
     ("reverses sign", "explicitly ruled out wording"),
+    ("opposite-signed", "retired MCF7 double-error claim, in paraphrase"),
+    ("failure modes", "retired MCF7 double-error claim, in paraphrase"),
 ]
+
+# The same retired claims must not survive in PROSE either. The MCF7
+# double-error claim was retired from the figures and then reappeared in the
+# Conclusion as "opposite-signed measurement error under two unrelated
+# failure modes" -- a paraphrase that passed every string grep aimed at the
+# figures. Only one failure mode survives the n = 672 correction, so the
+# prose scope is not optional.
+PROSE_SCOPE = ["body.tex"]
 
 # figure stem -> [(number as printed, what it is, how it is verified)]
 NUMBERS = {
     "Fig1_architecture": [
         ("4,875", "images in the descriptive atlas", "atlas_images"),
-        ("2.22", "backbone parameters, millions", "const"),
+        ("2.22", "backbone parameters, millions", "backbone_m"),
         ("304.6", "Cellpose-SAM parameters, millions", "const"),
         ("137", "parameter ratio", "ratio_params"),
         ("87", "percent of Cellpose F1", "ratio_f1"),
     ],
     "Fig2_architecture": [
-        ("33", "parameters in the distance head", "const"),
-        ("2.22", "backbone parameters, millions", "const"),
+        ("33", "parameters in the distance head", "head_inference"),
+        ("2.22", "backbone parameters, millions", "backbone_m"),
     ],
     "Fig2_micrographs": [
         ("315", "expert instances in the shown field", "const"),
@@ -211,8 +221,43 @@ def expected_numbers() -> dict[str, str]:
         n = sum(1 for _ in csv.DictReader(f))
     out["atlas_images"] = f"{n:,}"
 
-    out["ratio_params"] = f"{304.6 / 2.22:.0f}"
-    out["ratio_f1"] = f"{0.709 / 0.815 * 100:.0f}"
+    # 0.709 and 0.815 were literals here until the same false-pass sweep that
+    # caught them in check_numbers.py. baselines/baseline_summary.csv carries
+    # both, so the 87% Figure 1 prints is now derived from disk, not from a
+    # pair of numbers typed in twice.
+    basef = ROOT / "baselines" / "baseline_summary.csv"
+    with open(basef) as f:
+        base = {r["method"]: float(r["overall_f1"]) for r in csv.DictReader(f)}
+    # Backbone size, recomputed from the checkpoint under the DEFINED
+    # quantity: trainable parameters, buffers excluded.
+    #
+    # This nearly became the eighth false pass, in the opposite direction to
+    # the others. A raw sum of the 166 stored tensors gives 2,225,069 ->
+    # 2.23 M, and on that basis the printed 2.22 M looked like a truncation
+    # of the same class as the 0.575/0.576 defect. It is not. 60 of those
+    # tensors are BatchNorm buffers -- running_mean (1,664), running_var
+    # (1,664) and num_batches_tracked (20), 3,348 elements over 20 BN layers
+    # -- and buffers are not parameters. Excluding them gives 2,221,721 ->
+    # 2.22 M, which is exactly what the paper prints. The measurement was
+    # wrong, not the manuscript. Two independent routes agree on 2,221,721:
+    # this name partition, and sum(p.numel() for p in model.parameters()) on
+    # the instantiated model after a strict load.
+    ckpt = ROOT / "runs" / "instance" / "best.pt"
+    BUFFERS = ("running_mean", "running_var", "num_batches_tracked")
+    import torch                                   # local: only this needs it
+    sd = torch.load(ckpt, map_location="cpu", weights_only=False)
+    sd = sd["model_state_dict"]
+    params = {k: v for k, v in sd.items() if not k.endswith(BUFFERS)}
+    n_param = sum(v.numel() for v in params.values())
+    n_heads = sum(v.numel() for k, v in params.items()
+                  if k.startswith(("dist_head", "bnd_head")))
+    out["backbone_m"] = f"{n_param / 1e6:.2f}"
+    out["heads_total"] = str(n_heads)
+    out["head_inference"] = str(
+        sum(v.numel() for k, v in params.items() if k.startswith("dist_head")))
+
+    out["ratio_params"] = f"{304.6 / float(out['backbone_m']):.0f}"
+    out["ratio_f1"] = f"{base['ours (watershed)'] / base['Cellpose'] * 100:.0f}"
     out["ratio_recover"] = f"{370 / 315 * 100:.1f}"
     return out
 
@@ -256,6 +301,18 @@ def main() -> int:
         for phrase, why in FORBIDDEN:
             hit = contains(txt, phrase)
             note(stem, f"does not contain \"{phrase}\"", not hit,
+                 f"FOUND -- {why}" if hit else "")
+
+    # 1b --- retired claims must not survive in the prose either --------
+    for stem in PROSE_SCOPE:
+        src = D / stem
+        if not src.is_file():
+            continue
+        txt = src.read_text(encoding="utf8")
+        flat = re.sub(r"\s+", " ", txt)
+        for phrase, why in FORBIDDEN:
+            hit = phrase.lower() in flat.lower()
+            note(stem, f'does not contain "{phrase}"', not hit,
                  f"FOUND -- {why}" if hit else "")
 
     # 2 ---- atlas tier letters against the lineage table ---------------

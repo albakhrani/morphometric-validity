@@ -351,6 +351,128 @@ def latex(d: Path, stem: str, body: str, passes: int = 2) -> Path:
     return d / f"{stem}.pdf"
 
 
+def test_named_refs(tmp: Path) -> None:
+    """Named section references must match a heading verbatim.
+
+    Two paraphrases already shipped under the unnumbered-section scheme --
+    \\emph{the density-resolved atlas} against "A density-resolved
+    morphological atlas", and \\emph{Coverage} against "Coverage: when a
+    pipeline measures nothing". Both were found by eye. On its first run
+    this checker caught a third that no eye had: the CAS tree carried a
+    reference to the OUP heading name, which does not exist in that tree.
+    """
+    print("\ncheck_named_refs.py")
+    d = tmp / "namedrefs"
+    d.mkdir()
+    HEAD = ("\\subsection{A density-resolved morphological atlas}\n"
+            "\\subsection{Coverage: when a pipeline measures nothing}\n")
+
+    (d / "body.tex").write_text(
+        HEAD + "Text citing \\emph{A density-resolved morphological atlas} "
+               "and \\emph{Coverage: when a pipeline measures nothing}.\n",
+        encoding="utf8")
+    out = run("check_named_refs.py", "--dir", str(d))
+    check("verbatim named references pass",
+          "named-reference checks passed" in out and "[FAIL]" not in out,
+          [l for l in out.splitlines() if "[FAIL]" in l][:1])
+
+    # The exact paraphrase that shipped, four times.
+    (d / "body.tex").write_text(
+        HEAD + "Text citing \\emph{the density-resolved atlas}.\n",
+        encoding="utf8")
+    out = run("check_named_refs.py", "--dir", str(d))
+    check("a paraphrased heading reference is caught",
+          "[FAIL]" in out and "density-resolved atlas" in out,
+          [l for l in out.splitlines() if "FAIL" in l][:1])
+
+    # The truncation that shipped, three times.
+    (d / "body.tex").write_text(
+        HEAD + "Text citing \\emph{Coverage: when a pipeline} only.\n",
+        encoding="utf8")
+    out = run("check_named_refs.py", "--dir", str(d))
+    check("a truncated heading reference is caught", "[FAIL]" in out)
+
+    # Ordinary emphasis must not be mistaken for a broken reference.
+    (d / "body.tex").write_text(
+        HEAD + "Recovers \\emph{fewer} lineage directions, and \\emph{all} "
+               "of them.\n", encoding="utf8")
+    out = run("check_named_refs.py", "--dir", str(d))
+    check("ordinary emphasis is not flagged as a broken reference",
+          "[FAIL]" not in out)
+
+    for tree, label in ((HERE, "OUP"),
+                        (HERE.parent / "paper2_overleaf_current", "CAS")):
+        out = run("check_named_refs.py", "--dir", str(tree))
+        check(f"the real {label} tree passes",
+              "named-reference checks passed" in out and "[FAIL]" not in out,
+              [l for l in out.splitlines() if "[FAIL]" in l][:1])
+
+
+def test_forbidden_prose_scope(tmp: Path) -> None:
+    """Retired claims must not survive in PROSE, not only in figures.
+
+    The MCF7 double-error claim was retired from the artwork and then
+    reappeared in the Conclusion as "opposite-signed measurement error under
+    two unrelated failure modes" -- a paraphrase every figure-scoped grep
+    passed. This control puts it back and requires a FAIL.
+    """
+    print("\ncheck_figure_text.py -- prose scope")
+    d = tmp / "prose"
+    d.mkdir()
+    shutil.copy(HERE / "Fig5_merged.pdf", d / "Fig5_merged.pdf")
+
+    (d / "body.tex").write_text(
+        "Some prose. For one lineage, opposite-signed measurement error "
+        "under two unrelated failure modes was observed.\n", encoding="utf8")
+    out = run("check_figure_text.py", "--dir", str(d))
+    check("a retired claim paraphrased into prose is caught",
+          'FAIL body.tex: does not contain "opposite-signed"' in out
+          and 'FAIL body.tex: does not contain "two unrelated"' in out,
+          [l for l in out.splitlines() if "body.tex" in l and "FAIL" in l][:2])
+
+    (d / "body.tex").write_text(
+        "Some prose with nothing retired in it at all.\n", encoding="utf8")
+    out = run("check_figure_text.py", "--dir", str(d))
+    check("clean prose passes the same scope",
+          "FAIL body.tex" not in out)
+
+    check("the real body.tex carries none of the retired claims",
+          "FAIL body.tex" not in run("check_figure_text.py"))
+
+
+def test_backbone_param_definition(tmp: Path) -> None:
+    """The backbone count must be trainable parameters, buffers excluded.
+
+    Guards a near-miss in the opposite direction to this project's usual
+    failure: summing the checkpoint file gives 2,225,069 -> 2.23 M and makes
+    the correct printed 2.22 M look like a truncation. The 3,348 BatchNorm
+    buffer elements are the whole difference.
+    """
+    print("\ncheck_figure_text.py -- parameter definition")
+    from check_figure_text import expected_numbers, ROOT
+    import torch
+
+    e = expected_numbers()
+    check("backbone recomputed from the checkpoint reads 2.22",
+          e["backbone_m"] == "2.22", f'got {e["backbone_m"]}')
+    check("added heads total 66, inference head 33",
+          e["heads_total"] == "66" and e["head_inference"] == "33",
+          f'{e["heads_total"]} / {e["head_inference"]}')
+
+    sd = torch.load(ROOT / "runs" / "instance" / "best.pt",
+                    map_location="cpu", weights_only=False)["model_state_dict"]
+    BUFFERS = ("running_mean", "running_var", "num_batches_tracked")
+    raw = sum(v.numel() for v in sd.values())
+    par = sum(v.numel() for k, v in sd.items() if not k.endswith(BUFFERS))
+    check("buffers are actually present and material (else this guards nothing)",
+          raw - par == 3348, f"buffer elements {raw - par}")
+    check("summing the FILE would give the wrong figure -- 2.23, not 2.22",
+          f"{raw / 1e6:.2f}" == "2.23" and f"{par / 1e6:.2f}" == "2.22",
+          f"file {raw / 1e6:.4f} vs parameters {par / 1e6:.4f}")
+    check("137x ratio is stable under the parameter-only definition",
+          f"{304.6 / (par / 1e6):.0f}" == "137")
+
+
 def test_pdf_placeholders(tmp: Path) -> None:
     print("\ncheck_pdf_placeholders.py")
     d = tmp / "pdfsweep"
@@ -417,6 +539,19 @@ def test_numbers_precision(tmp: Path) -> None:
     check("the offending value and its correct form are both named",
           "'0.83' should be 0.832" in out)
 
+    # The measurement-optimal F1 must be recomputed from the frozen-split
+    # CSV, not asserted. A body printing the old 0.575 must FAIL -- that
+    # literal was enforced by this checker for six batches.
+    b2 = (d / "body.tex").read_text(encoding="utf8").replace("0.576", "0.575")
+    (d / "body.tex").write_text(b2, encoding="utf8")
+    out = run("check_numbers.py", "--dir", str(d))
+    check("a body printing the superseded 0.575 is caught",
+          "[FAIL] F1 Ours, measurement-optimal = 0.576" in out
+          and "CSV gives 0.5755" in out,
+          [l for l in out.splitlines() if "measurement-optimal" in l][:1])
+    # restore for the sentence-level control below
+    (d / "body.tex").write_text(b2.replace("0.575", "0.576"), encoding="utf8")
+
     # The summarizing "remained between 0.83 and 0.90" must NOT trip it:
     # it names no range with "from" and is resolved by the exact per-bin
     # values in the next sentence.
@@ -432,7 +567,7 @@ def test_numbers_precision(tmp: Path) -> None:
 GOOD_BIB = "".join(f"""@article{{K{i},
   author  = {{Alpha, A. and Beta, B.}},
   title   = {{A title {i}}},
-  journal = {{Journal of Testing}},
+  journal = {{J Test}},
   volume  = {{{i}}},
   pages   = {{1--9}},
   year    = {{2020}},
@@ -446,6 +581,13 @@ def test_bib_consistency(tmp: Path) -> None:
     print("\ncheck_bib_consistency.py")
     d = tmp / "bib"
     d.mkdir()
+
+    # A .tex that cites every fixture key: the citedness check reads the
+    # bib's own directory, so a fixture with no citing source would fail on
+    # citedness rather than on the property under test.
+    (d / "body.tex").write_text(
+        "Text citing " + " ".join("\\citep{K%d}" % i for i in range(1, 7))
+        + ".\n", encoding="utf8")
 
     (d / "refs.bib").write_text(GOOD_BIB, encoding="utf8")
     out = run("check_bib_consistency.py", "--bib", str(d / "refs.bib"))
@@ -461,12 +603,28 @@ def test_bib_consistency(tmp: Path) -> None:
           "[FAIL]" in out and "K3" in out,
           [l for l in out.splitlines() if "[FAIL]" in l][:1])
 
-    # One journal abbreviated where five are spelled out.
+    # An un-abbreviated title that is NOT on the documented exception list.
+    # The rule is no longer "all one form": five titles are full-form on
+    # purpose because the NLM Catalog would not confirm them. A sixth,
+    # undocumented, is a genuine miss.
     (d / "mixed.bib").write_text(
-        GOOD_BIB.replace("{Journal of Testing}", "{J Test}", 1), encoding="utf8")
-    out = run("check_bib_consistency.py", "--bib", str(d / "mixed.bib"))
-    check("a mixed abbreviated/full journal name is caught",
-          "[FAIL] journal names use one form" in out)
+        GOOD_BIB.replace("{J Test}", "{Journal of Undocumented Testing}", 1),
+        encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(d / "mixed.bib"),
+              "--tex-dir", str(d))
+    check("an un-abbreviated, undocumented journal title is caught",
+          "[FAIL] journal names are NLM-abbreviated" in out
+          and "Undocumented" in out,
+          [l for l in out.splitlines() if "[FAIL]" in l][:1])
+
+    # A documented exception must NOT fail.
+    (d / "excepted.bib").write_text(
+        GOOD_BIB.replace("{J Test}", "{Nature}", 1),
+        encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(d / "excepted.bib"),
+              "--tex-dir", str(d))
+    check("a documented self-abbreviating title does not fail",
+          "[FAIL] journal names are NLM-abbreviated" not in out)
 
     # The stem test must not classify a spelled-out title as abbreviated,
     # and must not miss a real abbreviation. Both directions, because this
@@ -487,6 +645,123 @@ def test_bib_consistency(tmp: Path) -> None:
     check("a duplicate citation key is caught",
           "[FAIL] no duplicate citation keys" in out)
 
+    # ---- citedness: an entry nobody cites must FAIL -------------------
+    # Closes the class that produced a false "uncited" finding: a hand-grep
+    # of prose for the DOI fragment bbae284 could not see that the entry is
+    # cited by key as Tang2024. Matched by key here, never by DOI.
+    (d / "cited.bib").write_text(
+        GOOD_BIB + """@article{Orphan,
+  author  = {Nobody, N.},
+  title   = {An entry no sentence cites},
+  journal = {J Test},
+  volume  = {9},
+  pages   = {1--2},
+  year    = {2020},
+  doi     = {10.1000/test.orphan}
+}
+""", encoding="utf8")
+    (d / "body.tex").write_text(
+        "Text citing " + " ".join(f"\\citep{{K{i}}}" for i in range(1, 7))
+        + ".\n", encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(d / "cited.bib"),
+              "--tex-dir", str(d))
+    check("an uncited refs.bib entry is caught",
+          "[FAIL] every refs.bib entry is cited" in out and "Orphan" in out,
+          [l for l in out.splitlines() if "cited" in l][:1])
+
+    # And the same fixture passes once something cites it.
+    (d / "body.tex").write_text(
+        "Text citing " + " ".join(f"\\citep{{K{i}}}" for i in range(1, 7))
+        + " and \\citep{Orphan}.\n", encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(d / "cited.bib"),
+              "--tex-dir", str(d))
+    check("the same entry passes once cited",
+          "[FAIL] every refs.bib entry is cited" not in out)
+
+    # A key cited by DOI-like text must NOT count as cited.
+    (d / "body.tex").write_text(
+        "Text citing " + " ".join(f"\\citep{{K{i}}}" for i in range(1, 7))
+        + " and the DOI 10.1000/test.orphan in prose.\n", encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(d / "cited.bib"),
+              "--tex-dir", str(d))
+    check("a DOI mentioned in prose does not count as a citation",
+          "[FAIL] every refs.bib entry is cited" in out)
+
+    # Both real trees are covered by the same framework.
+    for tree, label in ((HERE, "OUP"),
+                        (HERE.parent / "paper2_overleaf_current", "CAS")):
+        out = run("check_bib_consistency.py", "--bib", str(tree / "refs.bib"),
+                  "--tex-dir", str(tree))
+        check(f"every entry in the real {label} bib is cited",
+              "[FAIL] every refs.bib entry is cited" not in out,
+              [l for l in out.splitlines() if "cited" in l][:1])
+
+    # ---- rendered entry form (Step F) --------------------------------
+    # A .bst is a stack language with no type system; the only honest test
+    # of one is what it emits. These fixtures are hand-written .bbl files,
+    # so they exercise the checker without a BibTeX run.
+    dF = tmp / "bblform"
+    dF.mkdir()
+    FOURBIB = """@article{Four,
+  author  = {Alpha, A. and Beta, B. and Gamma, C. and Delta, D.},
+  title   = {Four authors},
+  journal = {J Test},
+  volume  = {4},
+  pages   = {1--9},
+  year    = {2020},
+  doi     = {10.1000/test.four}
+}
+"""
+    (dF / "four.bib").write_text(FOURBIB, encoding="utf8")
+    (dF / "four.tex").write_text("\\citep{Four}\n", encoding="utf8")
+
+    good = ("\\begin{thebibliography}{1}\n\\bibitem{Four}\n"
+            "Alpha A, Beta B, Gamma C \\emph{et~al.}\n"
+            "\\newblock Four authors.\n"
+            "\\newblock {\\em J Test} 2020;\\textbf{4}:1--9.\n"
+            "\\newblock \\url{https://doi.org/10.1000/test.four}.\n"
+            "\\end{thebibliography}\n")
+    (dF / "good.bbl").write_text(good, encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(dF / "four.bib"),
+              "--tex-dir", str(dF), "--bbl", str(dF / "good.bbl"))
+    check("a correctly truncated four-author entry passes",
+          "[FAIL]" not in out,
+          [l for l in out.splitlines() if "[FAIL]" in l][:1])
+
+    # (a) all four authors listed -- the truncation failure
+    (dF / "fourlisted.bbl").write_text(
+        good.replace("Alpha A, Beta B, Gamma C \\emph{et~al.}",
+                     "Alpha A, Beta B, Gamma C, Delta D"), encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(dF / "four.bib"),
+              "--tex-dir", str(dF), "--bbl", str(dF / "fourlisted.bbl"))
+    check("a rendered entry listing four authors is caught",
+          "[FAIL] no rendered entry lists more than three authors" in out
+          and "[FAIL] italic et al. present wherever" in out,
+          [l for l in out.splitlines() if "[FAIL]" in l][:2])
+
+    # (b) volume not bold
+    (dF / "unbold.bbl").write_text(
+        good.replace("\\textbf{4}", "4"), encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(dF / "four.bib"),
+              "--tex-dir", str(dF), "--bbl", str(dF / "unbold.bbl"))
+    check("an unbolded volume is caught",
+          "[FAIL] volume is bold in every article entry" in out)
+
+    # (c) DOI not rendered as a URL
+    (dF / "nourl.bbl").write_text(
+        good.replace("\\url{https://doi.org/10.1000/test.four}",
+                     "doi:10.1000/test.four"), encoding="utf8")
+    out = run("check_bib_consistency.py", "--bib", str(dF / "four.bib"),
+              "--tex-dir", str(dF), "--bbl", str(dF / "nourl.bbl"))
+    check("a DOI not rendered as a full URL is caught",
+          "[FAIL] every article DOI renders as a full" in out)
+
+    # (d) the real rendered bibliography
+    out = run("check_bib_consistency.py")
+    check("the real rendered bibliography passes every entry-form check",
+          "[FAIL]" not in out,
+          [l for l in out.splitlines() if "[FAIL]" in l][:2])
+
     # Positive control on the real file.
     out = run("check_bib_consistency.py")
     check("the real refs.bib passes",
@@ -504,6 +779,9 @@ def main() -> int:
         test_pdf_placeholders(tmp)
         test_numbers_precision(tmp)
         test_bib_consistency(tmp)
+        test_backbone_param_definition(tmp)
+        test_forbidden_prose_scope(tmp)
+        test_named_refs(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     bad = [n for n, ok, _ in results if not ok]

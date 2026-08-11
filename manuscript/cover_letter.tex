@@ -1,0 +1,92 @@
+%% Cover letter -- Briefings in Bioinformatics.
+%% Standalone: compiles on its own, does not \input anything from the
+%% manuscript. Kept to one page; the page count is asserted in the build
+%% check, not eyeballed.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{parskip}
+\usepackage[T1]{fontenc}
+\pagestyle{empty}
+\begin{document}
+
+\noindent Ala R. Alareqi, Tianzhi Luo\\
+Department of Modern Mechanics\\
+University of Science and Technology of China, Hefei, Anhui 230026, China
+
+\vspace{0.6em}
+\noindent To the Editors, \emph{Briefings in Bioinformatics}
+
+\vspace{0.6em}
+\noindent\textbf{Re: ``Morphometric validity is not a scalar: segmentation
+accuracy does not predict which biological conclusions survive
+measurement''}
+
+\vspace{0.4em}
+Dear Editors,
+
+We submit the above manuscript for consideration as a Problem Solving Protocol.
+
+Its claim is that the segmentation metrics the field uses to choose a
+method do not certify the biological measurements derived from that method,
+and we quantify by how much. On LIVECell, foreground
+intersection-over-union rises from 0.832 to 0.905 as fields fill while
+matched-instance detection F1 on that same predicted foreground collapses
+from 0.416 to 0.017: the pixel score gives no warning of the instance-level
+failure beneath it. The consequence is not academic. Cellpose detects
+significantly better than the lightweight extension we introduce (F1 0.815
+against 0.709, non-overlapping intervals) yet returns no detectable
+morphological trajectory for BT-474, one of the best-evidenced lineages in
+the dataset, where the weaker detector recovers one. Which lineages a
+pipeline gets wrong depends on the segmenter, and detection accuracy does
+not predict which.
+
+The design is built to make that comparison interpretable rather than
+suggestive. Four mask sources spanning a sevenfold range in detection F1
+are passed through one identical geometry code path, so any difference in
+the biology recovered is attributable to the masks. Operating points are
+selected on validation and frozen before the test split is touched, with
+the resulting degradation reported rather than hidden. Every result carries
+bootstrap confidence intervals and paired tests, and is checked against
+four independent artifact controls. An ablation isolates the mechanism to a
+single 33-parameter head, and the training runs reproduce to bit-identical
+weight hashes. All code, per-cell measurements and trained weights are
+released.
+
+The question is live in this journal. \emph{Briefings in Bioinformatics}
+has recently published two systematic evaluations of cell segmentation
+(\texttt{bbae407}; \texttt{bbag066}), both of which rank methods by
+segmentation quality and motivate that ranking by the biological analyses
+the masks will feed. Neither tests whether the ranking predicts the
+validity of those analyses. That is the gap this paper closes, and it
+requires a design neither of them needed. The journal has also published
+the argument that benchmark competitiveness and generalization are not
+equivalent properties (\texttt{bbag193}); our contribution is the
+measurement of that separation for bioimage-derived morphometry, against
+expert ground truth, across a continuous crowding gradient.
+
+One production note: the reference list is formatted with
+\texttt{oup-plain-unsrt.bst}, a derivative of OUP's own
+\texttt{oup-plain.bst}. It differs from the stock file in five respects,
+all made to match the entry style the journal prints: the alphabetical sort
+pass is removed, so references are numbered in order of first appearance as
+the journal specifies; author names are set as surname followed by bare
+initials, comma-separated and without a closing conjunction; author lists
+longer than three are truncated to the first three followed by
+\emph{et al.}; the journal, year, volume and pages are set as
+\emph{Journal} Year;\textbf{Volume}:pages with the volume in bold; and the
+DOI is emitted as a full resolvable URL. Journal titles carry the NLM Catalog
+abbreviation, verified for each title against the catalog record. The unmodified
+\texttt{oup-plain.bst} is included in the submission, byte-identical to the
+file OUP ships.
+
+The manuscript is original, is not under consideration elsewhere, and all
+authors have approved it. The study used only the publicly available
+LIVECell dataset and required no ethical approval. We declare no competing
+interests.
+
+\vspace{0.6em}
+\noindent Yours sincerely,\\
+Tianzhi Luo, on behalf of the authors\\
+\texttt{tzluo@ustc.edu.cn}
+
+\end{document}

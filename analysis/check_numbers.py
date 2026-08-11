@@ -103,20 +103,59 @@ def main() -> int:
                      r"\s*([\d.]+)\s*&\s*([\d.]+\\?%|---)", line)
         if m and m.group(1) not in t6:
             t6[m.group(1)] = m.group(2)
-    for who, want in (("Cellpose", "0.815"),
-                      ("Ours, detection-optimal", "0.709"),
-                      ("Ours, measurement-optimal", "0.575")):
-        note(f"F1 {who} = {want}", want, "body.tex Table 6(a)",
-             t6.get(who) == want, f"table says {t6.get(who)}")
+    # The measurement-optimal F1 is RECOMPUTED from the frozen-split CSV, not
+    # asserted as a literal. It was a literal until now, and the literal was
+    # wrong: optimize/test_frozen.csv gives 0.5755 for the min-|bias| row,
+    # which is 0.576 at the document's three decimals, while every one of the
+    # fifteen sites printed 0.575. The check compared body.tex against a
+    # hardcoded copy of body.tex's own error and therefore enforced it --
+    # the same false-pass signature as the rest of this project's history.
+    #
+    # Cellpose's 0.815 and the detection-optimal 0.709 are recomputed too,
+    # from the baseline-comparison summary. An earlier revision of this block
+    # asserted them as literals on the grounds that "no CSV on disk carries
+    # them" -- which was simply false: baselines/baseline_summary.csv has
+    # carried all three overall_f1 values the whole time. That would have
+    # been the seventh instance of the same false pass, so it is recorded
+    # here rather than quietly corrected.
+    frozen = ROOT / "optimize" / "test_frozen.csv"
+    with open(frozen) as fh:
+        rows_f = {r["selected_for"]: r for r in csv.DictReader(fh)}
+    meas = float(rows_f["min |bias|"]["test_f1"])
+    want_meas = f"{meas:.3f}"
+    note(f"F1 Ours, measurement-optimal = {want_meas}", want_meas,
+         "recomputed from optimize/test_frozen.csv",
+         t6.get("Ours, measurement-optimal") == want_meas,
+         f"table says {t6.get('Ours, measurement-optimal')}, "
+         f"CSV gives {meas} -> {want_meas}")
+
+    basef = ROOT / "baselines" / "baseline_summary.csv"
+    with open(basef) as fh:
+        base = {r["method"]: r["overall_f1"] for r in csv.DictReader(fh)}
+    for who, key in (("Cellpose", "Cellpose"),
+                     ("Ours, detection-optimal", "ours (watershed)")):
+        want = f"{float(base[key]):.3f}"
+        note(f"F1 {who} = {want}", want,
+             "recomputed from baselines/baseline_summary.csv",
+             t6.get(who) == want,
+             f"table says {t6.get(who)}, CSV gives {base[key]}")
 
     # ---- values that must appear identically wherever they appear ----
+    # The Key Points no longer carry performance statistics: the B17 form
+    # was adjudicated at <=160 words with metric values removed, matching
+    # the three published exemplars, none of which prints an F1 or a p-value
+    # in the box. So the metric rows below are scoped to the abstract and
+    # cover letter, which do still carry them. The two rows that remain
+    # keypoints-scoped are a coverage fraction and a parameter count, both
+    # of which survive in the box by design -- and this map is what would
+    # catch it if either silently dropped out.
     SHARED = {
-        "0.832": ("IoU floor", ["abstract", "keypoints", "cover letter"]),
-        "0.905": ("IoU ceiling", ["abstract", "keypoints", "cover letter"]),
-        "0.416": ("CC F1 floor", ["keypoints", "cover letter"]),
-        "0.017": ("CC F1 ceiling", ["keypoints", "cover letter"]),
-        "0.815": ("Cellpose F1", ["abstract", "keypoints", "cover letter"]),
-        "0.709": ("ours F1", ["abstract", "keypoints", "cover letter"]),
+        "0.832": ("IoU floor", ["abstract", "cover letter"]),
+        "0.905": ("IoU ceiling", ["abstract", "cover letter"]),
+        "0.416": ("CC F1 floor", ["cover letter"]),
+        "0.017": ("CC F1 ceiling", ["cover letter"]),
+        "0.815": ("Cellpose F1", ["abstract", "cover letter"]),
+        "0.709": ("ours F1", ["abstract", "cover letter"]),
         "18.7": ("CC coverage failure %", ["abstract", "keypoints"]),
         "1,419": ("full post-attachment set", ["abstract"]),
         "33": ("head parameter count",

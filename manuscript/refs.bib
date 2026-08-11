@@ -1,0 +1,572 @@
+% ============================================================
+% Paper 2 - VERIFIED references (batch 1)
+% Every entry below was confirmed by search: title, authors,
+% year, venue, and page numbers where available.
+% ============================================================
+
+% ---------- LIVECell dataset (the data) ----------
+@article{Edlund2021,
+  author  = {Edlund, Christoffer and Jackson, Timothy R. and Khalid, Nabeel and
+             Bevan, Nicola and Dale, Timothy and Dengel, Andreas and
+             Ahmed, Sheraz and Trygg, Johan and Sj{\"o}gren, Rickard},
+  title   = {{LIVECell}---A large-scale dataset for label-free live cell segmentation},
+  journal = {Nat Methods},
+  volume  = {18}, number = {9}, pages = {1038--1045}, year = {2021},
+  doi     = {10.1038/s41592-021-01249-6}
+}
+
+% ---------- Cellpose family (our baseline) ----------
+@article{Stringer2021,
+  author  = {Stringer, Carsen and Wang, Tim and Michaelos, Michalis and
+             Pachitariu, Marius},
+  title   = {Cellpose: a generalist algorithm for cellular segmentation},
+  journal = {Nat Methods},
+  volume  = {18}, number = {1}, pages = {100--106}, year = {2021},
+  doi     = {10.1038/s41592-020-01018-x}
+}
+
+@article{Pachitariu2022,
+  author  = {Pachitariu, Marius and Stringer, Carsen},
+  title   = {Cellpose 2.0: how to train your own model},
+  journal = {Nat Methods},
+  volume  = {19}, number = {12}, pages = {1634--1641}, year = {2022},
+  doi     = {10.1038/s41592-022-01663-4}
+}
+
+@article{Stringer2025,
+  author  = {Stringer, Carsen and Pachitariu, Marius},
+  title   = {Cellpose3: one-click image restoration for improved cellular segmentation},
+  journal = {Nat Methods},
+  volume  = {22}, number = {3}, pages = {592--599}, year = {2025},
+  doi     = {10.1038/s41592-025-02595-5}
+}
+
+% Cellpose-SAM: the backbone actually benchmarked here (release 4.2.1.1).
+% Still a preprint as of writing. NOT the same paper as Stringer2025 above,
+% which is Cellpose3 (image restoration).
+@misc{Pachitariu2025,
+  author = {Pachitariu, Marius and Rariden, Michael and Stringer, Carsen},
+  title  = {Cellpose-{SAM}: superhuman generalization for cellular segmentation},
+  year   = {2025},
+  note   = {Preprint},
+  howpublished = {bioRxiv 2025.04.28.651001},
+  doi    = {10.1101/2025.04.28.651001}
+}
+
+% ---------- StarDist (instance segmentation for crowded cells) ----------
+@inproceedings{Schmidt2018,
+  author    = {Schmidt, Uwe and Weigert, Martin and Broaddus, Coleman and Myers, Gene},
+  title     = {Cell Detection with Star-Convex Polygons},
+  booktitle = {Medical Image Computing and Computer Assisted Intervention (MICCAI)},
+  series    = {Lecture Notes in Computer Science}, volume = {11071},
+  pages     = {265--273}, year = {2018}, publisher = {Springer},
+  doi       = {10.1007/978-3-030-00934-2_30}
+}
+
+@inproceedings{Weigert2020,
+  author    = {Weigert, Martin and Schmidt, Uwe and Haase, Robert and
+               Sugawara, Ko and Myers, Gene},
+  title     = {Star-convex Polyhedra for {3D} Object Detection and Segmentation in Microscopy},
+  booktitle = {IEEE Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2020}, doi = {10.1109/WACV45572.2020.9093435}
+}
+
+% ---------- HoVer-Net: distance-map decoding + watershed (our lineage) ----------
+@article{Graham2019,
+  author  = {Graham, Simon and Vu, Quoc Dang and Raza, Shan E Ahmed and
+             Azam, Ayesha and Tsang, Yee Wah and Kwak, Jin Tae and Rajpoot, Nasir},
+  title   = {Hover-Net: Simultaneous segmentation and classification of nuclei
+             in multi-tissue histology images},
+  journal = {Med Image Anal},
+  volume  = {58}, pages = {101563}, year = {2019},
+  doi     = {10.1016/j.media.2019.101563}
+}
+
+% ---------- Architecture foundations (Paper 1 backbone) ----------
+@inproceedings{Ronneberger2015,
+  author    = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
+  title     = {{U-Net}: Convolutional Networks for Biomedical Image Segmentation},
+  booktitle = {Medical Image Computing and Computer-Assisted Intervention (MICCAI)},
+  series    = {Lecture Notes in Computer Science}, volume = {9351},
+  pages     = {234--241}, year = {2015}, publisher = {Springer},
+  doi       = {10.1007/978-3-319-24574-4_28}
+}
+
+@inproceedings{Zhou2018,
+  author    = {Zhou, Zongwei and Rahman Siddiquee, Md Mahfuzur and
+               Tajbakhsh, Nima and Liang, Jianming},
+  title     = {{UNet++}: A Nested {U-Net} Architecture for Medical Image Segmentation},
+  booktitle = {Deep Learning in Medical Image Analysis and Multimodal Learning
+               for Clinical Decision Support (DLMIA/ML-CDS), MICCAI Workshops},
+  series    = {Lecture Notes in Computer Science}, volume = {11045},
+  pages     = {3--11}, year = {2018}, publisher = {Springer},
+  doi       = {10.1007/978-3-030-00889-5_1}
+}
+
+@inproceedings{Woo2018,
+  author    = {Woo, Sanghyun and Park, Jongchan and Lee, Joon-Young and Kweon, In So},
+  title     = {{CBAM}: Convolutional Block Attention Module},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  series    = {Lecture Notes in Computer Science}, volume = {11211},
+  pages     = {3--19}, year = {2018}, publisher = {Springer},
+  doi       = {10.1007/978-3-030-01234-2_1}
+}
+
+% ---------- Cell shape index / tissue mechanics (atlas interpretation) ----------
+@article{Bi2015,
+  author  = {Bi, Dapeng and Lopez, J. H. and Schwarz, J. M. and Manning, M. Lisa},
+  title   = {A density-independent rigidity transition in biological tissues},
+  journal = {Nat Phys},
+  volume  = {11}, number = {12}, pages = {1074--1079}, year = {2015},
+  doi     = {10.1038/nphys3471}
+}
+
+@article{Bi2016,
+  author  = {Bi, Dapeng and Yang, Xingbo and Marchetti, M. Cristina and Manning, M. Lisa},
+  title   = {Motility-Driven Glass and Jamming Transitions in Biological Tissues},
+  journal = {Phys Rev X},
+  volume  = {6}, number = {2}, pages = {021011}, year = {2016},
+  doi     = {10.1103/PhysRevX.6.021011}
+}
+
+@article{Park2015,
+  author  = {Park, Jin-Ah and Kim, Jae Hun and Bi, Dapeng and Mitchel, Jennifer A.
+             and Qazvini, Nader Taheri and Tantisira, Kelan and Park, Chan Young
+             and others},
+  title   = {Unjamming and cell shape in the asthmatic airway epithelium},
+  journal = {Nat Mater},
+  volume  = {14}, number = {10}, pages = {1040--1048}, year = {2015},
+  doi     = {10.1038/nmat4357}
+}
+
+@article{Atia2018,
+  author  = {Atia, Lior and Bi, Dapeng and Sharma, Yasha and Mitchel, Jennifer A.
+             and Gweon, Bomi and Koehler, Stephan A. and DeCamp, Stephen J. and others},
+  title   = {Geometric constraints during epithelial jamming},
+  journal = {Nat Phys},
+  volume  = {14}, number = {6}, pages = {613--620}, year = {2018},
+  doi     = {10.1038/s41567-018-0089-9}
+}
+
+@article{Mongera2018,
+  author  = {Mongera, Alessandro and Rowghanian, Payam and Gustafson, Hannah J.
+             and Shelton, Elijah and Kealhofer, David A. and Carn, Emmet K. and others},
+  title   = {A fluid-to-solid jamming transition underlies vertebrate body axis elongation},
+  journal = {Nature},
+  volume  = {561}, number = {7723}, pages = {401--405}, year = {2018},
+  doi     = {10.1038/s41586-018-0479-2}
+}
+
+% ---------- Distance-map regression: the DIRECT antecedent of our head ----------
+@article{Naylor2019,
+  author  = {Naylor, Peter and La{\'e}, Marick and Reyal, Fabien and Walter, Thomas},
+  title   = {Segmentation of Nuclei in Histopathology Images by Deep Regression
+             of the Distance Map},
+  journal = {IEEE Trans Med Imaging},
+  volume  = {38}, number = {2}, pages = {448--459}, year = {2019},
+  doi     = {10.1109/TMI.2018.2865709}
+}
+
+% ---------- Instance segmentation / crowded-cell context ----------
+@inproceedings{He2017,
+  author    = {He, Kaiming and Gkioxari, Georgia and Doll{\'a}r, Piotr and Girshick, Ross},
+  title     = {Mask {R-CNN}},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  pages     = {2980--2988}, year = {2017},
+  doi       = {10.1109/ICCV.2017.322}
+}
+
+@article{Isensee2021,
+  author  = {Isensee, Fabian and Jaeger, Paul F. and Kohl, Simon A. A. and
+             Petersen, Jens and Maier-Hein, Klaus H.},
+  title   = {{nnU-Net}: a self-configuring method for deep learning-based
+             biomedical image segmentation},
+  journal = {Nat Methods},
+  volume  = {18}, number = {2}, pages = {203--211}, year = {2021},
+  doi     = {10.1038/s41592-020-01008-z}
+}
+
+@article{Cutler2022,
+  author  = {Cutler, Kevin J. and Stringer, Carsen and Lo, Teresa W. and
+             Rappez, Luca and Stroustrup, Nicholas and Brook Peterson, S. and
+             Wiggins, Paul A. and Mougous, Joseph D.},
+  title   = {Omnipose: a high-precision morphology-independent solution for
+             bacterial cell segmentation},
+  journal = {Nat Methods},
+  volume  = {19}, number = {11}, pages = {1438--1448}, year = {2022},
+  doi     = {10.1038/s41592-022-01639-4}
+}
+
+@article{Falk2019,
+  author  = {Falk, Thorsten and Mai, Dominic and Bensch, Robert and
+             {\c{C}}i{\c{c}}ek, {\"O}zg{\"u}n and Abdulkadir, Ahmed and others},
+  title   = {{U-Net}: deep learning for cell counting, detection, and morphometry},
+  journal = {Nat Methods},
+  volume  = {16}, number = {1}, pages = {67--70}, year = {2019},
+  doi     = {10.1038/s41592-018-0261-2}
+}
+
+% ---------- Watershed (post-processing classic) ----------
+@article{Vincent1991,
+  author  = {Vincent, Luc and Soille, Pierre},
+  title   = {Watersheds in Digital Spaces: An Efficient Algorithm Based on
+             Immersion Simulations},
+  journal = {IEEE Trans Pattern Anal Mach Intell},
+  volume  = {13}, number = {6}, pages = {583--598}, year = {1991},
+  doi     = {10.1109/34.87344}
+}
+
+% ---------- Independent support: U-Net++ + watershed on brightfield cells ----------
+@article{Vasinkova2024,
+  author  = {Va{\v{s}}inkov{\'a}, Mark{\'e}ta and Dole{\v{z}}{\'i}, V{\'i}t and
+             Va{\v{s}}inek, Michal and Gajdo{\v{s}}, Petr and Kriegov{\'a}, Eva},
+  title   = {Comparing Deep Learning Performance for Chronic Lymphocytic Leukaemia
+             Cell Segmentation in Brightfield Microscopy Images},
+  journal = {Bioinform Biol Insights},
+  volume  = {18},
+  pages   = {11779322241272387}, year = {2024},
+  doi     = {10.1177/11779322241272387}
+}
+
+% ============================================================
+% RELATED WORK ON THIS DATASET AND IN THIS APPLICATION AREA
+% (These were assembled when the target was Computers in Biology and
+% Medicine. The target is now Briefings in Bioinformatics; they are kept
+% because they are relevant on the merits, not for editorial fit. The
+% Briefings in Bioinformatics in-journal set is a separate section.)
+% ============================================================
+
+% Same LIVECell data, same 8 cell lines. Closest prior work on this dataset.
+@article{Fiore2025,
+  author  = {Fiore, Pierpaolo and Terlizzi, Andrea and Bardozzo, Francesco and
+             Li{\`o}, Pietro and Tagliaferri, Roberto},
+  title   = {Advancing label-free cell classification with connectome-inspired
+             explainable models and a novel {LIVECell-CLS} dataset},
+  journal = {Comput Biol Med},
+  volume  = {192}, number = {Pt B}, pages = {110274}, year = {2025},
+  doi     = {10.1016/j.compbiomed.2025.110274}
+}
+
+
+
+
+
+% ---------- Shape/fluidity: supporting and CONTESTING evidence ----------
+% Arora 2024 directly supports our Fig 6B mean-q vs SD-q coupling result.
+@article{Arora2024,
+  author  = {Arora, Pragya and Sadhukhan, Souvik and Nandi, Saroj Kumar and
+             Bi, Dapeng and Sood, A. K. and Ganapathy, Rajesh},
+  title   = {A shape-driven reentrant jamming transition in confluent monolayers
+             of synthetic cell-mimics},
+  journal = {Nat Commun},
+  volume  = {15}, pages = {5645}, year = {2024},
+  doi     = {10.1038/s41467-024-49044-z}
+}
+
+% Preprint. Re-check publication status immediately before submission; if it
+% has since appeared in a journal, replace this entry with the published one.
+@misc{Bera2026,
+  author = {Bera, Pradip K. and Nguyen, Anh Q. and McCord, Molly and
+            Bi, Dapeng and Notbohm, Jacob},
+  title  = {Shape-Independent Fluidization in Epithelial Cell Monolayers},
+  year   = {2026},
+  note   = {Preprint},
+  howpublished = {arXiv}
+}
+
+% Preprint (arXiv). Re-check publication status immediately before submission.
+@misc{Ray2024,
+  author = {Ray, Saptorshi and Biswas, Sayantan and Das, Dibyendu},
+  title  = {Role of intercellular adhesion in modulating tissue fluidity},
+  year   = {2024},
+  note   = {Preprint},
+  howpublished = {arXiv:2409.19440}
+}
+
+% ============================================================
+% IN-JOURNAL SET: Briefings in Bioinformatics
+% All four verified against Crossref (title, authors, volume,
+% issue, article number, year, DOI) before being added.
+% ============================================================
+
+% The direct antecedent of this paper's parent claim: segmentation metrics
+% are ambiguously defined and the ambiguity reorders leaderboards. Stays
+% within the metrics; does not test downstream measurement validity.
+@article{Hirling2024,
+  author  = {Hirling, Dominik and Tasnadi, Ervin and Caicedo, Juan and
+             Caroprese, Maria V. and Sj{\"o}gren, Rickard and
+             Aubreville, Marc and Koos, Krisztian and Horvath, Peter},
+  title   = {Segmentation metric misinterpretations in bioimage analysis},
+  journal = {Nat Methods},
+  volume  = {21}, number = {2}, pages = {213--216}, year = {2024},
+  doi     = {10.1038/s41592-023-01942-8}
+}
+
+% 18 methods, TissueNet + LIVECell. Ranks methods by segmentation quality.
+@article{Wang2024,
+  author  = {Wang, Yuxing and Zhao, Junhan and Xu, Hongye and Han, Cheng and
+             Tao, Zhiqiang and Zhou, Dawei and Geng, Tong and Liu, Dongfang and
+             Ji, Zhicheng},
+  title   = {A systematic evaluation of computational methods for cell segmentation},
+  journal = {Brief Bioinform},
+  volume  = {25}, number = {5}, pages = {bbae407}, year = {2024},
+  doi     = {10.1093/bib/bbae407}
+}
+
+% 7 algorithms, 5 datasets, assessed on effectiveness, robustness, efficiency.
+@article{Yang2026,
+  author  = {Yang, Rongrong and Xue, Guangfu and Wang, Zuxiang and Cai, Yideng and
+             Yang, Wenyi and Que, Jinhao and Tan, Renjie and Sun, Haoxiu and
+             Wang, Pingping and Xu, Zhaochun and Jiang, Qinghua and Zhou, Wenyang},
+  title   = {Systematic evaluation of computational methods for cell segmentation},
+  journal = {Brief Bioinform},
+  volume  = {27}, number = {1}, pages = {bbag066}, year = {2026},
+  doi     = {10.1093/bib/bbag066}
+}
+
+% Evidence that morphological profiling is a routine basis for inference.
+@article{Tang2024,
+  author  = {Tang, Qiaosi and Ratnayake, Ranjala and Seabra, Gustavo and
+             Jiang, Zhe and Fang, Ruogu and Cui, Lina and Ding, Yousong and
+             Kahveci, Tamer and Bian, Jiang and Li, Chenglong and
+             Luesch, Hendrik and Li, Yanjun},
+  title   = {Morphological profiling for drug discovery in the era of deep learning},
+  journal = {Brief Bioinform},
+  volume  = {25}, number = {4}, pages = {bbae284}, year = {2024},
+  doi     = {10.1093/bib/bbae284}
+}
+
+% ---------- Evaluation methodology: what a segmentation score does and does not license ----------
+
+@article{MaierHein2024,
+  author  = {Maier-Hein, Lena and Reinke, Annika and Godau, Patrick and Tizabi, Minu D. and Buettner, Florian and Christodoulou, Evangelia and Glocker, Ben and Isensee, Fabian and Kleesiek, Jens and Kozubek, Michal and Reyes, Mauricio and Riegler, Michael A. and Wiesenfarth, Manuel and Kavur, A. Emre and Sudre, Carole H. and Baumgartner, Michael and Eisenmann, Matthias and Heckmann-N{\"o}tzel, Doreen and R{\"a}dsch, Tim and Acion, Laura and Antonelli, Michela and Arbel, Tal and Bakas, Spyridon and Benis, Arriel and Blaschko, Matthew B. and Cardoso, M. Jorge and Cheplygina, Veronika and Cimini, Beth A. and Collins, Gary S. and Farahani, Keyvan and Ferrer, Luciana and Galdran, Adrian and van Ginneken, Bram and Haase, Robert and Hashimoto, Daniel A. and Hoffman, Michael M. and Huisman, Merel and Jannin, Pierre and Kahn, Charles E. and Kainmueller, Dagmar and Kainz, Bernhard and Karargyris, Alexandros and Karthikesalingam, Alan and Kofler, Florian and Kopp-Schneider, Annette and Kreshuk, Anna and Kurc, Tahsin and Landman, Bennett A. and Litjens, Geert and Madani, Amin and Maier-Hein, Klaus and Martel, Anne L. and Mattson, Peter and Meijering, Erik and Menze, Bjoern and Moons, Karel G. M. and M{\"u}ller, Henning and Nichyporuk, Brennan and Nickel, Felix and Petersen, Jens and Rajpoot, Nasir and Rieke, Nicola and Saez-Rodriguez, Julio and S{\'a}nchez, Clara I. and Shetty, Shravya and van Smeden, Maarten and Summers, Ronald M. and Taha, Abdel A. and Tiulpin, Aleksei and Tsaftaris, Sotirios A. and Van Calster, Ben and Varoquaux, Ga{\"e}l and J{\"a}ger, Paul F.},
+  title   = {Metrics reloaded: recommendations for image analysis validation},
+  journal  = {Nat Methods},
+  volume  = {21},
+  number  = {2},
+  pages   = {195--212},
+  year    = {2024},
+  doi     = {10.1038/s41592-023-02151-z}
+}
+
+@article{Reinke2024,
+  author  = {Reinke, Annika and Tizabi, Minu D. and Baumgartner, Michael and Eisenmann, Matthias and Heckmann-N{\"o}tzel, Doreen and Kavur, A. Emre and R{\"a}dsch, Tim and Sudre, Carole H. and Acion, Laura and Antonelli, Michela and Arbel, Tal and Bakas, Spyridon and Benis, Arriel and Buettner, Florian and Cardoso, M. Jorge and Cheplygina, Veronika and Chen, Jianxu and Christodoulou, Evangelia and Cimini, Beth A. and Farahani, Keyvan and Ferrer, Luciana and Galdran, Adrian and van Ginneken, Bram and Glocker, Ben and Godau, Patrick and Hashimoto, Daniel A. and Hoffman, Michael M. and Huisman, Merel and Isensee, Fabian and Jannin, Pierre and Kahn, Charles E. and Kainmueller, Dagmar and Kainz, Bernhard and Karargyris, Alexandros and Kleesiek, Jens and Kofler, Florian and Kooi, Thijs and Kopp-Schneider, Annette and Kozubek, Michal and Kreshuk, Anna and Kurc, Tahsin and Landman, Bennett A. and Litjens, Geert and Madani, Amin and Maier-Hein, Klaus and Martel, Anne L. and Meijering, Erik and Menze, Bjoern and Moons, Karel G. M. and M{\"u}ller, Henning and Nichyporuk, Brennan and Nickel, Felix and Petersen, Jens and Rafelski, Susanne M. and Rajpoot, Nasir and Reyes, Mauricio and Riegler, Michael A. and Rieke, Nicola and Saez-Rodriguez, Julio and S{\'a}nchez, Clara I. and Shetty, Shravya and Summers, Ronald M. and Taha, Abdel A. and Tiulpin, Aleksei and Tsaftaris, Sotirios A. and Van Calster, Ben and Varoquaux, Ga{\"e}l and Yaniv, Ziv R. and J{\"a}ger, Paul F. and Maier-Hein, Lena},
+  title   = {Understanding metric-related pitfalls in image analysis validation},
+  journal  = {Nat Methods},
+  volume  = {21},
+  number  = {2},
+  pages   = {182--194},
+  year    = {2024},
+  doi     = {10.1038/s41592-023-02150-0}
+}
+
+@article{Laine2021,
+  author  = {Laine, Romain F. and Arganda-Carreras, Ignacio and Henriques, Ricardo and Jacquemet, Guillaume},
+  title   = {Avoiding a replication crisis in deep-learning-based bioimage analysis},
+  journal  = {Nat Methods},
+  volume  = {18},
+  number  = {10},
+  pages   = {1136--1144},
+  year    = {2021},
+  doi     = {10.1038/s41592-021-01284-3}
+}
+
+@article{Taha2015,
+  author  = {Taha, Abdel Aziz and Hanbury, Allan},
+  title   = {Metrics for evaluating 3D medical image segmentation: analysis, selection, and tool},
+  journal  = {BMC Med Imaging},
+  volume  = {15},
+  pages   = {29},
+  number  = {1},
+  year    = {2015},
+  doi     = {10.1186/s12880-015-0068-x}
+}
+
+@article{Madrid2026,
+  author  = {Madrid, Marcio and Madrid, Melania and Zablah, Isaac},
+  title   = {Benchmark competitiveness and generalization are not equivalent: a critical commentary on {HybridSP}},
+  journal  = {Brief Bioinform},
+  volume  = {27},
+  pages   = {bbag193},
+  number  = {2},
+  year    = {2026},
+  doi     = {10.1093/bib/bbag193}
+}
+
+% ---------- Instance-segmentation benchmarks and matched-instance metrics ----------
+
+@article{Caicedo2019DSB,
+  author  = {Caicedo, Juan C. and Goodman, Allen and Karhohs, Kyle W. and Cimini, Beth A. and Ackerman, Jeanelle and Haghighi, Marzieh and Heng, CherKeng and Becker, Tim and Doan, Minh and McQuin, Claire and Rohban, Mohammad and Singh, Shantanu and Carpenter, Anne E.},
+  title   = {Nucleus segmentation across imaging experiments: the 2018 Data Science Bowl},
+  journal  = {Nat Methods},
+  volume  = {16},
+  number  = {12},
+  pages   = {1247--1253},
+  year    = {2019},
+  doi     = {10.1038/s41592-019-0612-7}
+}
+
+@article{Caicedo2019Eval,
+  author  = {Caicedo, Juan C. and Roth, Jonathan and Goodman, Allen and Becker, Tim and Karhohs, Kyle W. and Broisin, Matthieu and Molnar, Csaba and McQuin, Claire and Singh, Shantanu and Theis, Fabian J. and Carpenter, Anne E.},
+  title   = {Evaluation of Deep Learning Strategies for Nucleus Segmentation in Fluorescence Images},
+  journal  = {Cytometry A},
+  volume  = {95},
+  number  = {9},
+  pages   = {952--965},
+  year    = {2019},
+  doi     = {10.1002/cyto.a.23863}
+}
+
+@article{Ma2024,
+  author  = {Ma, Jun and Xie, Ronald and Ayyadhury, Shamini and Ge, Cheng and Gupta, Anubha and Gupta, Ritu and Gu, Song and Zhang, Yao and Lee, Gihun and Kim, Joonkee and Lou, Wei and Li, Haofeng and Upschulte, Eric and Dickscheid, Timo and de Almeida, Jos{\'e} Guilherme and Wang, Yixin and Han, Lin and Yang, Xin and Labagnara, Marco and Gligorovski, Vojislav and Scheder, Maxime and Rahi, Sahand Jamal and Kempster, Carly and Pollitt, Alice and Espinosa, Leon and Mignot, T{\^a}m and Middeke, Jan Moritz and Eckardt, Jan-Niklas and Li, Wangkai and Li, Zhaoyang and Cai, Xiaochen and Bai, Bizhe and Greenwald, Noah F. and Van Valen, David and Weisbart, Erin and Cimini, Beth A. and Cheung, Trevor and Br{\"u}ck, Oscar and Bader, Gary D. and Wang, Bo},
+  title   = {The multimodality cell segmentation challenge: toward universal solutions},
+  journal  = {Nat Methods},
+  volume  = {21},
+  number  = {6},
+  pages   = {1103--1113},
+  year    = {2024},
+  doi     = {10.1038/s41592-024-02233-6}
+}
+
+@article{Maska2023,
+  author  = {Ma{\v{s}}ka, Martin and Ulman, Vladim{\'i}r and Delgado-Rodriguez, Pablo and G{\'o}mez-de-Mariscal, Estibaliz and Ne{\v{c}}asov{\'a}, Tereza and Guerrero Pe{\~n}a, Fidel A. and Ren, Tsang Ing and Meyerowitz, Elliot M. and Scherr, Tim and L{\"o}ffler, Katharina and Mikut, Ralf and Guo, Tianqi and Wang, Yin and Allebach, Jan P. and Bao, Rina and Al-Shakarji, Noor M. and Rahmon, Gani and Toubal, Imad Eddine and Palaniappan, Kannappan and Lux, Filip and Matula, Petr and Sugawara, Ko and Magnusson, Klas E. G. and Aho, Layton and Cohen, Andrew R. and Arbelle, Assaf and Ben-Haim, Tal and Raviv, Tammy Riklin and Isensee, Fabian and J{\"a}ger, Paul F. and Maier-Hein, Klaus H. and Zhu, Yanming and Ederra, Cristina and Urbiola, Ainhoa and Meijering, Erik and Cunha, Alexandre and Mu{\~n}oz-Barrutia, Arrate and Kozubek, Michal and Ortiz-de-Sol{\'o}rzano, Carlos},
+  title   = {The Cell Tracking Challenge: 10 years of objective benchmarking},
+  journal  = {Nat Methods},
+  volume  = {20},
+  number  = {7},
+  pages   = {1010--1020},
+  year    = {2023},
+  doi     = {10.1038/s41592-023-01879-y}
+}
+
+@article{Ulman2017,
+  author  = {Ulman, Vladim{\'i}r and Ma{\v{s}}ka, Martin and Magnusson, Klas E G and Ronneberger, Olaf and Haubold, Carsten and Harder, Nathalie and Matula, Pavel and Matula, Petr and Svoboda, David and Radojevic, Miroslav and Smal, Ihor and Rohr, Karl and Jald{\'e}n, Joakim and Blau, Helen M and Dzyubachyk, Oleh and Lelieveldt, Boudewijn and Xiao, Pengdong and Li, Yuexiang and Cho, Siu-Yeung and Dufour, Alexandre C and Olivo-Marin, Jean-Christophe and Reyes-Aldasoro, Constantino C and Solis-Lemus, Jose A and Bensch, Robert and Brox, Thomas and Stegmaier, Johannes and Mikut, Ralf and Wolf, Steffen and Hamprecht, Fred A and Esteves, Tiago and Quelhas, Pedro and Demirel, {\"O}mer and Malmstr{\"o}m, Lars and Jug, Florian and Tomancak, Pavel and Meijering, Erik and Mu{\~n}oz-Barrutia, Arrate and Kozubek, Michal and Ortiz-de-Solorzano, Carlos},
+  title   = {An objective comparison of cell-tracking algorithms},
+  journal  = {Nat Methods},
+  volume  = {14},
+  number  = {12},
+  pages   = {1141--1152},
+  year    = {2017},
+  doi     = {10.1038/nmeth.4473}
+}
+
+@inproceedings{Lin2014,
+  author  = {Lin, Tsung-Yi and Maire, Michael and Belongie, Serge and Hays, James and Perona, Pietro and Ramanan, Deva and Doll{\'a}r, Piotr and Zitnick, C. Lawrence},
+  title   = {{Microsoft} {COCO}: Common Objects in Context},
+  booktitle = {Computer Vision -- ECCV 2014},
+  pages   = {740--755},
+  year    = {2014},
+  doi     = {10.1007/978-3-319-10602-1_48}
+}
+
+@article{Everingham2010,
+  author  = {Everingham, Mark and Van Gool, Luc and Williams, Christopher K. I. and Winn, John and Zisserman, Andrew},
+  title   = {The {Pascal} Visual Object Classes ({VOC}) Challenge},
+  journal  = {Int J Comput Vis},
+  volume  = {88},
+  number  = {2},
+  pages   = {303--338},
+  year    = {2009},
+  doi     = {10.1007/s11263-009-0275-4}
+}
+
+% ---------- Foundation and whole-cell segmentation models ----------
+
+@article{Greenwald2022,
+  author  = {Greenwald, Noah F. and Miller, Geneva and Moen, Erick and Kong, Alex and Kagel, Adam and Dougherty, Thomas and Fullaway, Christine Camacho and McIntosh, Brianna J. and Leow, Ke Xuan and Schwartz, Morgan Sarah and Pavelchek, Cole and Cui, Sunny and Camplisson, Isabella and Bar-Tal, Omer and Singh, Jaiveer and Fong, Mara and Chaudhry, Gautam and Abraham, Zion and Moseley, Jackson and Warshawsky, Shiri and Soon, Erin and Greenbaum, Shirley and Risom, Tyler and Hollmann, Travis and Bendall, Sean C. and Keren, Leeat and Graf, William and Angelo, Michael and Van Valen, David},
+  title   = {Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning},
+  journal  = {Nat Biotechnol},
+  volume  = {40},
+  number  = {4},
+  pages   = {555--565},
+  year    = {2021},
+  doi     = {10.1038/s41587-021-01094-0}
+}
+
+@inproceedings{Kirillov2023,
+  author  = {Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chloe and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C. and Lo, Wan-Yen and Doll{\'a}r, Piotr and Girshick, Ross},
+  title   = {Segment Anything},
+  booktitle = {2023 IEEE/CVF International Conference on Computer Vision (ICCV)},
+  pages   = {3992--4003},
+  year    = {2023},
+  doi     = {10.1109/ICCV51070.2023.00371}
+}
+
+@article{Archit2025,
+  author  = {Archit, Anwai and Freckmann, Luca and Nair, Sushmita and Khalid, Nabeel and Hilt, Paul and Rajashekar, Vikas and Freitag, Marei and Teuber, Carolin and Spitzner, Melanie and Tapia Contreras, Constanza and Buckley, Genevieve and von Haaren, Sebastian and Gupta, Sagnik and Grade, Marian and Wirth, Matthias and Schneider, G{\"u}nter and Dengel, Andreas and Ahmed, Sheraz and Pape, Constantin},
+  title   = {Segment Anything for Microscopy},
+  journal  = {Nat Methods},
+  volume  = {22},
+  number  = {3},
+  pages   = {579--591},
+  year    = {2025},
+  doi     = {10.1038/s41592-024-02580-4}
+}
+
+% ---------- Downstream pipelines that consume masks as measurements ----------
+
+@article{Carpenter2006,
+  author  = {Carpenter, Anne E and Jones, Thouis R and Lamprecht, Michael R and Clarke, Colin and Kang, In Han and Friman, Ola and Guertin, David A and Chang, Joo Han and Lindquist, Robert A and Moffat, Jason and Golland, Polina and Sabatini, David M},
+  title   = {{CellProfiler}: image analysis software for identifying and quantifying cell phenotypes},
+  journal  = {Genome Biol},
+  volume  = {7},
+  pages   = {R100},
+  number  = {10},
+  year    = {2006},
+  doi     = {10.1186/gb-2006-7-10-r100}
+}
+
+@article{Stirling2021,
+  author  = {Stirling, David R. and Swain-Bowden, Madison J. and Lucas, Alice M. and Carpenter, Anne E. and Cimini, Beth A. and Goodman, Allen},
+  title   = {{CellProfiler} 4: improvements in speed, utility and usability},
+  journal  = {BMC Bioinformatics},
+  volume  = {22},
+  pages   = {433},
+  number  = {1},
+  year    = {2021},
+  doi     = {10.1186/s12859-021-04344-9}
+}
+
+@article{Berg2019,
+  author  = {Berg, Stuart and Kutra, Dominik and Kroeger, Thorben and Straehle, Christoph N. and Kausler, Bernhard X. and Haubold, Carsten and Schiegg, Martin and Ales, Janez and Beier, Thorsten and Rudy, Markus and Eren, Kemal and Cervantes, Jaime I and Xu, Buote and Beuttenmueller, Fynn and Wolny, Adrian and Zhang, Chong and Koethe, Ullrich and Hamprecht, Fred A. and Kreshuk, Anna},
+  title   = {ilastik: interactive machine learning for (bio)image analysis},
+  journal  = {Nat Methods},
+  volume  = {16},
+  number  = {12},
+  pages   = {1226--1232},
+  year    = {2019},
+  doi     = {10.1038/s41592-019-0582-9}
+}
+
+@article{Chamier2021,
+  author  = {von Chamier, Lucas and Laine, Romain F. and Jukkala, Johanna and Spahn, Christoph and Krentzel, Daniel and Nehme, Elias and Lerche, Martina and Hern{\'a}ndez-P{\'e}rez, Sara and Mattila, Pieta K. and Karinou, Eleni and Holden, S{\'e}amus and Solak, Ahmet Can and Krull, Alexander and Buchholz, Tim-Oliver and Jones, Martin L. and Royer, Lo{\"i}c A. and Leterrier, Christophe and Shechtman, Yoav and Jug, Florian and Heilemann, Mike and Jacquemet, Guillaume and Henriques, Ricardo},
+  title   = {Democratising deep learning for microscopy with {ZeroCostDL4Mic}},
+  journal  = {Nat Commun},
+  volume  = {12},
+  pages   = {2276},
+  number  = {1},
+  year    = {2021},
+  doi     = {10.1038/s41467-021-22518-0}
+}
+
+@article{Bannon2021,
+  author  = {Bannon, Dylan and Moen, Erick and Schwartz, Morgan and Borba, Enrico and Kudo, Takamasa and Greenwald, Noah and Vijayakumar, Vibha and Chang, Brian and Pao, Edward and Osterman, Erik and Graf, William and Van Valen, David},
+  title   = {{DeepCell} {Kiosk}: scaling deep learning--enabled cellular image analysis with {Kubernetes}},
+  journal  = {Nat Methods},
+  volume  = {18},
+  number  = {1},
+  pages   = {43--45},
+  year    = {2021},
+  doi     = {10.1038/s41592-020-01023-0}
+}
+
+@article{Grexa2024,
+  author  = {Grexa, Istvan and Iv{\'a}n, Zsanett Zs{\'o}fia and Migh, Ede and Kov{\'a}cs, Ferenc and Bolck, Hella A and Zheng, Xiang and Mund, Andreas and Moshkov, Nikita and Micz{\'a}n, Vivien and Koos, Krisztian and Horvath, Peter},
+  title   = {{SuperCUT}, an unsupervised multimodal image registration with deep learning for biomedical microscopy},
+  journal  = {Brief Bioinform},
+  volume  = {25},
+  pages   = {bbae029},
+  number  = {2},
+  year    = {2024},
+  doi     = {10.1093/bib/bbae029}
+}
