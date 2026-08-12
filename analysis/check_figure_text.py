@@ -303,6 +303,29 @@ def main() -> int:
             note(stem, f"does not contain \"{phrase}\"", not hit,
                  f"FOUND -- {why}" if hit else "")
 
+    # 1a --- and not in the OTHER tree's figures either -----------------
+    # This check used to run against whichever tree --dir pointed at, which
+    # in practice was always paper2_bib. On 2026-08-11 the CAS fallback was
+    # found still shipping the pre-fix Fig1_architecture.pdf, whose outcomes
+    # box read "MCF7: fabricated by two unrelated error sources" -- the exact
+    # retracted claim this list exists to catch. The submission tree had been
+    # regenerated; the fallback had not, and nothing looked. A retired claim
+    # must not survive in ANY tree that can be compiled and sent, so the
+    # sweep now always covers both.
+    for sib in ("paper2_bib", "paper2_overleaf_current"):
+        sd = ROOT / sib
+        if not sd.is_dir() or sd.resolve() == D.resolve():
+            continue
+        sibfigs = sorted(p for p in sd.glob("*.pdf")
+                         if p.name not in {"main.pdf", "cover_letter.pdf",
+                                           "COMPILED_PREVIEW.pdf"})
+        for p in sibfigs:
+            txt = extract(p)
+            for phrase, why in FORBIDDEN:
+                hit = contains(txt, phrase)
+                note(f"{sib}/{p.stem}", f"does not contain \"{phrase}\"",
+                     not hit, f"FOUND -- {why}" if hit else "")
+
     # 1b --- retired claims must not survive in the prose either --------
     for stem in PROSE_SCOPE:
         src = D / stem
