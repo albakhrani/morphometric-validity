@@ -50,6 +50,7 @@ import argparse
 import os
 
 import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42   # TrueType, not Type 3
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch
@@ -63,7 +64,11 @@ HEADS_NEW = (0, 3)                    # distance + boundary heads attach here
 C_ENC   = "#1f4e79"; C_ENCBG  = "#dce6f1"
 C_NEST  = "#4a4a4a"; C_NESTBG = "#ededed"
 C_NEW   = "#a02020"; C_NEWBG  = "#fbe9e9"
-C_DS    = "#1e6b3a"; C_DSBG   = "#e4f0e8"
+# Lightened from #1e6b3a. Against C_NEW (#a02020) the old green sat at
+# near-identical luminance (78 vs 70 on the 0-255 grey axis), which is
+# the classic deuteranope confusion pair -- and the two are adjacent
+# swatches in the legend, with nothing but hue to separate them.
+C_DS    = "#2e9e57"; C_DSBG   = "#e4f0e8"
 C_CBAM  = "#8a5a00"; C_CBAMBG = "#fdf2dd"
 
 
@@ -92,7 +97,7 @@ def build(outpath: str) -> None:
     # print. Nothing here may go below 7 pt.
     # 6.74 not 6.87: bbox_inches="tight" adds ~9 pt of padding, so this yields
     # a 494.5 pt artwork that LaTeX places at scale 1.000.
-    fig = plt.figure(figsize=(6.71, 4.41))
+    fig = plt.figure(figsize=(7.169, 4.712))
     # Panel A occupies the top ~68%, B and C share the bottom
     axA = fig.add_axes([0.005, 0.335, 0.99, 0.655]); axA.axis("off")
     axB = fig.add_axes([0.005, 0.015, 0.60, 0.295]); axB.axis("off")

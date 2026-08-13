@@ -44,9 +44,19 @@ import argparse
 import os
 import sys
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42   # TrueType, not Type 3
+matplotlib.rcParams['ps.fonttype'] = 42
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.abspath(__file__))
+# Both directories, not just this one. main() imports build_instance_model
+# from phase11_instance_model, which lives in the PROJECT ROOT one level up,
+# so inserting only _HERE made this script impossible to run as documented --
+# it needed a manually supplied PYTHONPATH. Matches figure4_micrographs.py.
+for _p in (_HERE, os.path.abspath(os.path.join(_HERE, ".."))):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 
 # ---------------------------------------------------------------- utilities
@@ -227,6 +237,26 @@ def render_row(axes, img, fg, dist, bnd, coords, lab, tag, n_gt, fg_thr,
             over = (int(lab.max()) - n_gt) / n_gt * 100.0
             title += f"\nexpert: {n_gt}   ({over:+.1f}%)"
 
+        # 100 um scale bar, first panel only. LIVECell releases each
+        # acquisition as four 704 x 520 crops covering 0.875 x 0.645 mm
+        # (Edlund et al. 2021), so one pixel is 1.24 um. The measured
+        # descriptors are dimensionless, but a reader cannot judge cell size
+        # or the 150 px exclusion without this.
+        if k == 0 and row_index == 0:
+            import matplotlib.patheffects as _pe
+            _ref = arr if arr is not None else lab
+            _h, _w = _ref.shape[:2]
+            _bar = 100.0 / (0.875e3 / 704.0)
+            _x1 = _w * 0.96
+            _x0 = _x1 - _bar
+            _y = _h * 0.945
+            _o = [_pe.withStroke(linewidth=1.8, foreground="black")]
+            ax.plot([_x0, _x1], [_y, _y], "-", color="white", lw=2.0,
+                    solid_capstyle="butt", zorder=5, path_effects=_o)
+            ax.text((_x0 + _x1) / 2.0, _y - _h * 0.022, r"100 $\mu$m",
+                    color="white", fontsize=7.0, ha="center", va="bottom",
+                    zorder=5, path_effects=_o)
+
         ax.set_title(title, fontsize=8.0, pad=3)
         ax.set_xticks([]); ax.set_yticks([])
         for sp in ax.spines.values():
@@ -297,7 +327,7 @@ def main():
     # below Elsevier's 6 pt artwork minimum. At 7 inches wide the figure is
     # reproduced at very nearly 1:1, so the type prints at the size set here.
     nrow = len(targets)
-    fig, axs = plt.subplots(2 * nrow, 3, figsize=(7.0, 2.05 * 2 * nrow))
+    fig, axs = plt.subplots(2 * nrow, 3, figsize=(7.165, 2.098 * 2 * nrow))
     axs = np.atleast_2d(axs)
     # render_row expects the six axes of one field in reading order
     rows = [np.concatenate([axs[2 * r], axs[2 * r + 1]]) for r in range(nrow)]

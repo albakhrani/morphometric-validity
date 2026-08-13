@@ -20,6 +20,7 @@ import math
 import os
 
 import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42   # TrueType, not Type 3
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -28,6 +29,17 @@ from matplotlib.ticker import MaxNLocator
 STYLE = {"expert":   ("#222222", "-",  "expert"),
          "ours":     ("#2166AC", "-",  "ours (instance-preserving)"),
          "conncomp": ("#B2182B", "--", "connected components")}
+
+# The CSV carries the pipeline's sanitized identifiers. LIVECell, the tables
+# and the body text all use the hyphenated ATCC forms, and a figure that
+# prints BT474 next to a table that prints BT-474 reads as two cell lines.
+DISPLAY = {"BT474": "BT-474", "BV2": "BV-2"}
+
+# Panel order matches the per-lineage block of the mask-source table
+# (ascending expert rho), because those two objects are read against each
+# other. Alphabetical order made that comparison a lookup.
+PANEL_ORDER = ["SK-OV-3", "SH-SY5Y", "A172", "MCF7",
+               "BV2", "BT474", "Huh7", "SkBr3"]
 
 
 def main():
@@ -38,13 +50,15 @@ def main():
     a = ap.parse_args()
 
     d = pd.read_csv(a.data)
-    cts = sorted(d.cell_type.dropna().unique())
+    present = set(d.cell_type.dropna().unique())
+    cts = [c for c in PANEL_ORDER if c in present]
+    cts += [c for c in sorted(present) if c not in PANEL_ORDER]
     ncol = min(4, max(1, len(cts)))
     nrow = int(math.ceil(len(cts) / ncol))
 
     plt.rcParams.update({"font.family": "sans-serif",
                          "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"]})
-    fig, axes = plt.subplots(nrow, ncol, figsize=(1.72 * ncol, 1.58 * nrow),
+    fig, axes = plt.subplots(nrow, ncol, figsize=(1.861 * ncol, 1.710 * nrow),
                              squeeze=False)
 
     for i, ct in enumerate(cts):
@@ -62,8 +76,8 @@ def main():
                       .agg(phi=("phi", "median"), m=(f"meanq_{s}", "mean")))
             ax.plot(agg["phi"], agg["m"], ls, color=c, marker="o",
                     ms=2.4, lw=1.1, label=lab)
-        ax.set_title(ct, fontsize=8.0, pad=2.5)
-        ax.tick_params(labelsize=7.0, length=2.2, width=0.6, pad=1.5)
+        ax.set_title(DISPLAY.get(ct, ct), fontsize=8.0, pad=2.5)
+        ax.tick_params(labelsize=7.1, length=2.2, width=0.6, pad=1.5)
         ax.grid(alpha=0.15)
         ax.xaxis.set_major_locator(MaxNLocator(nbins=4, prune="both"))
         ax.yaxis.set_major_locator(MaxNLocator(nbins=4))

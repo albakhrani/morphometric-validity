@@ -41,7 +41,14 @@ UNUSED: set[str] = {"Fig4_envelope"}
 # the Tf operand is small even though the glyph prints at full size. Keyed by
 # figure stem -> number of sub-6 pt occurrences that are attributable to this.
 # Verified by eye on a 200 dpi render before being listed here.
-RADICAL_GLYPHS: dict[str, int] = {"Fig2_atlas": 1}   # the sqrt in "q = P/sqrt(A)"
+RADICAL_GLYPHS: dict[str, int] = {"Fig2_atlas": 1,      # the sqrt in "q = P/sqrt(A)"
+                                  "Fig1_architecture": 1}
+# Fig1_architecture joined the list on 2026-08-13, when the Type 42
+# conversion first made its glyphs measurable. Under Type 3 the radical was
+# not exposed as text at all and this checker read a 7.01 pt minimum for a
+# figure that had always carried it -- a false pass, not a regression.
+# Verified by eye at 700 dpi: the sqrt in "q = P/sqrt(A)" prints at the same
+# size as the 7 pt text around it.
 
 FLOOR_HARD = 6.0     # Elsevier artwork minimum
 FLOOR_TARGET = 7.0   # this project's target, with headroom

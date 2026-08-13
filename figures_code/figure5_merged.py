@@ -20,6 +20,7 @@ import argparse
 import os
 
 import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42   # TrueType, not Type 3
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -59,7 +60,7 @@ def main():
                          "xtick.labelsize": 7.2, "ytick.labelsize": 7.2,
                          "axes.linewidth": 0.6})
 
-    fig, axs = plt.subplots(2, 2, figsize=(6.75, 4.95),
+    fig, axs = plt.subplots(2, 2, figsize=(8.125, 5.958),
                             gridspec_kw=dict(hspace=0.62, wspace=0.30))
     (aA, aB), (aC, aD) = axs
 
@@ -82,7 +83,7 @@ def main():
     aB.set_ylim(0, 1.0)
     aB.set_xlabel("confluence  $\\varphi$")
     aB.set_ylabel("matched-instance F1")
-    aB.legend(frameon=False, fontsize=6.9, loc="upper right")
+    aB.legend(frameon=False, fontsize=7.05, loc="upper right")
     aB.grid(alpha=0.15)
     aB.set_title("instance detection collapses beneath it",
                  fontsize=7.6, color=CRIM, pad=3)
@@ -121,14 +122,14 @@ def main():
         ax.set_xlabel(xlab)
         ax.set_ylabel("detection F1")
         ax.grid(alpha=0.15)
-        ax.legend(frameon=False, fontsize=6.9, loc="lower left")
+        ax.legend(frameon=False, fontsize=7.05, loc="lower left")
     aC.set_title("detection-optimal is not measurement-optimal",
                  fontsize=7.6, color=GREY, pad=3)
     aD.set_title("amplitude is preserved only off the F1 peak",
                  fontsize=7.6, color=GREY, pad=3)
     cb = fig.colorbar(s, ax=[aC, aD], fraction=0.035, pad=0.02)
     cb.set_label("amplitude ratio", fontsize=7.2)
-    cb.ax.tick_params(labelsize=6.9)
+    cb.ax.tick_params(labelsize=7.05)
 
     for k, ax in enumerate((aA, aB, aC, aD)):
         ax.text(-0.19, 1.20, "ABCD"[k], transform=ax.transAxes,

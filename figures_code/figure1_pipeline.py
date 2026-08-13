@@ -28,6 +28,7 @@ import argparse
 import os
 
 import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42   # TrueType, not Type 3
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
@@ -243,8 +244,12 @@ def build(outpath: str) -> None:
     x0, step = GUT + 21.0, (W - 22.0) / len(stats)
     for j, (big, small) in enumerate(stats):
         xs = x0 + j * step
+        # FS_SUB, not FS_SUB + 2.2: at 10 pt these four numerals were the
+        # largest type in the figure, which contradicted the caption's own
+        # statement that this band is not a step in the validation
+        # argument. Now below the 8 pt box titles that carry the argument.
         ax.text(xs, py + ph * 0.66, big, ha="left", va="center",
-                fontsize=FS_SUB + 2.2, fontweight="bold", color=C_GREEN, zorder=3)
+                fontsize=FS_SUB, fontweight="bold", color=C_GREEN, zorder=3)
         ax.text(xs, py + ph * 0.28, small, ha="left", va="center",
                 fontsize=FS_SUB - 0.8, color=C_GREEN, zorder=3)
 
