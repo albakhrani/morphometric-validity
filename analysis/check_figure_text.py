@@ -332,9 +332,17 @@ def main() -> int:
         if not src.is_file():
             continue
         txt = src.read_text(encoding="utf8")
-        flat = re.sub(r"\s+", " ", txt)
+        # Normalize before matching. Collapsing whitespace alone is not
+        # enough: the recurring failure in this project is a phrase that
+        # wraps, and it wraps three ways -- across a newline ("six of\nsix"),
+        # across a paragraph indent, and at a hyphenation point
+        # ("manu-\nfactured", "sup- ported"). norm() strips every
+        # non-alphanumeric character, so all three rejoin and no forbidden
+        # phrase can hide in the line breaks. A line-based grep missed a live
+        # retraction site here once; this is the class fix.
+        flat = norm(txt)
         for phrase, why in FORBIDDEN:
-            hit = phrase.lower() in flat.lower()
+            hit = norm(phrase) in flat
             note(stem, f'does not contain "{phrase}"', not hit,
                  f"FOUND -- {why}" if hit else "")
 

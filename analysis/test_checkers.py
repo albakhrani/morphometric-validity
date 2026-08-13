@@ -397,6 +397,42 @@ def test_named_refs(tmp: Path) -> None:
         HEAD + "Recovers \\emph{fewer} lineage directions, and \\emph{all} "
                "of them.\n", encoding="utf8")
     out = run("check_named_refs.py", "--dir", str(d))
+    # ---- normalization: a forbidden phrase must not hide in a line break ----
+    # The recurring failure in this project is a string match defeated by
+    # wrapping: "manu-\nfactured", "sup- ported", "six of\nsix". The last of
+    # those hid a live retraction site from a line-based sweep. The prose
+    # scope now strips every non-alphanumeric character before matching, so
+    # all three rejoin. These three controls are what make that claim real:
+    # without them the normalizer has only ever seen text that was already
+    # contiguous.
+    d2 = Path(tempfile.mkdtemp())
+    for fig in HERE.glob("*.pdf"):
+        if fig.name not in ("main.pdf", "cover_letter.pdf"):
+            shutil.copy2(fig, d2 / fig.name)
+
+    (d2 / "body.tex").write_text(
+        "The masks were compared.\nMCF7 was fabricated by\ntwo unrelated "
+        "error sources.\n", encoding="utf8")
+    out = run("check_figure_text.py", "--dir", str(d2))
+    check("a forbidden phrase split across a NEWLINE is caught",
+          "fabricated by" in out and "FAIL" in out,
+          [l for l in out.splitlines() if "FAIL" in l][:1])
+
+    (d2 / "body.tex").write_text(
+        "The masks were compared. MCF7 was fabri-\ncated by two unre-\n"
+        "lated error sources.\n", encoding="utf8")
+    out = run("check_figure_text.py", "--dir", str(d2))
+    check("a forbidden phrase broken at a HYPHENATION point is caught",
+          "fabricated by" in out and "FAIL" in out,
+          [l for l in out.splitlines() if "FAIL" in l][:1])
+
+    (d2 / "body.tex").write_text(
+        "The masks were compared and nothing retired appears here.\n",
+        encoding="utf8")
+    out = run("check_figure_text.py", "--dir", str(d2))
+    check("clean prose is not flagged by the normalizer",
+          "FAIL" not in out)
+
     check("ordinary emphasis is not flagged as a broken reference",
           "[FAIL]" not in out)
 
